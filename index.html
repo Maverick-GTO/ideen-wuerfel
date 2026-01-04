@@ -7,7 +7,6 @@
     <title>Magische Karten</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixelarticons@1.8.1/fonts/pixelarticons.css">
 
     <style>
         :root {
@@ -24,7 +23,7 @@
 
         body {
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background-color: var(--bg-dark-blue);
             background-image: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="15" r="4" fill="%234da6ff"/><circle cx="45" cy="15" r="4" fill="%23ffffff"/><circle cx="15" cy="45" r="4" fill="%23ff66b3"/><circle cx="45" cy="45" r="4" fill="%239933ff"/></svg>');
             background-size: 60px 60px;
@@ -32,22 +31,26 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            justify-content: space-between; /* Verteilt den Platz zwischen oben und unten */
+            height: 100vh;
             overflow: hidden;
+            box-sizing: border-box;
         }
 
-        /* Kategorie-Buttons mit festen Farben */
+        /* Kategorie-Buttons oberhalb der Karte */
         .controls { 
             display: flex; 
             gap: 12px; 
-            margin-bottom: 40px; 
+            margin-top: 20px;
+            margin-bottom: 20px; 
             z-index: 100; 
+            width: 100%;
+            justify-content: center;
         }
         .cat-btn {
-            padding: 15px 22px; 
+            padding: 15px 20px; 
             font-family: 'Bangers', cursive; 
-            font-size: 22px;
+            font-size: 20px;
             border: 4px solid var(--pop-black); 
             cursor: pointer; 
             text-transform: uppercase;
@@ -55,22 +58,34 @@
             transition: 0.1s; 
             color: white;
             -webkit-text-stroke: 1px var(--pop-black);
+            flex: 1; /* Buttons teilen sich den Platz */
+            max-width: 120px;
+            text-align: center;
         }
         
         #btn-drinnen { background-color: var(--pop-green); }
-        #btn-drinnen.active { background-color: var(--pop-green-bright); }
+        #btn-drinnen.active { background-color: var(--pop-green-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
         
         #btn-draussen { background-color: var(--pop-red); }
-        #btn-draussen.active { background-color: var(--pop-red-bright); }
+        #btn-draussen.active { background-color: var(--pop-red-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
         
         #btn-lernen { background-color: var(--pop-blue); }
-        #btn-lernen.active { background-color: var(--pop-blue-bright); }
+        #btn-lernen.active { background-color: var(--pop-blue-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
 
         /* Karten-Stapel mittig */
+        .deck-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+
         .deck { 
             position: relative; 
             width: 280px; 
-            height: 390px; 
+            height: 400px; /* Höhe angepasst */
             perspective: 1200px; 
             z-index: 10; 
         }
@@ -96,10 +111,13 @@
             background-image: radial-gradient(var(--pop-black) 20%, transparent 21%);
             background-size: 15px 15px; 
             z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .card-back::after {
             content: '★'; 
-            font-size: 100px; 
+            font-size: 120px; 
             color: var(--pop-yellow);
             -webkit-text-stroke: 3px var(--pop-black); 
             text-shadow: 5px 5px 0 var(--pop-black);
@@ -114,25 +132,30 @@
             display: flex; 
             flex-direction: column; 
             justify-content: center;
-            padding: 25px;
+            align-items: center;
+            padding: 30px;
+            position: relative;
         }
 
-        .card-top-half { flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; }
-        .card-bottom-half { flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; }
+        /* Text zentral in der Karte */
+        .text-content { 
+            font-size: 36px; 
+            line-height: 1.2; 
+            text-transform: uppercase; 
+            word-break: break-word;
+            hyphens: auto;
+        }
 
-        .pixel-icon { font-size: 110px; color: var(--pop-black); display: block; line-height: 1; }
-        .text-content { font-size: 34px; line-height: 1.1; text-transform: uppercase; }
-
-        /* Vergrösserte Kartensymbole */
+        /* Kartensymbole in den Ecken */
         .suit { 
             position: absolute; 
-            font-size: 85px; 
+            font-size: 70px; 
             color: var(--pop-red); 
             -webkit-text-stroke: 2px var(--pop-black); 
             text-shadow: 2px 2px 0 var(--pop-black); 
         }
-        .top-left { top: 10px; left: 10px; }
-        .bottom-right { bottom: 10px; right: 10px; transform: rotate(180deg); }
+        .top-left { top: 15px; left: 15px; }
+        .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
 
         /* Comic Overlay XXL */
         #comic-overlay {
@@ -152,7 +175,7 @@
         }
 
         #go-btn {
-            margin-top: 40px; 
+            margin-bottom: 30px; 
             padding: 20px 80px; 
             background-color: var(--pop-yellow);
             color: var(--pop-black); 
@@ -163,6 +186,7 @@
             text-transform: uppercase; 
             box-shadow: 8px 8px 0px var(--pop-black);
         }
+        #go-btn:active { transform: translate(4px, 4px); box-shadow: 3px 3px 0px var(--pop-black); }
 
         .shuffle { animation: shuffle-move 0.4s ease-in-out infinite; }
         @keyframes shuffle-move { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(120px) rotate(10deg); } }
@@ -176,15 +200,18 @@
         <button class="cat-btn" id="btn-lernen" onclick="setCategory('lernen')">Lernen</button>
     </div>
 
-    <div class="deck" id="deck"></div>
+    <div class="deck-container">
+        <div class="deck" id="deck"></div>
+    </div>
+
     <div id="comic-overlay">BOOM!</div>
     <button id="go-btn" onclick="drawCard()">GO</button>
 
     <script>
         const data = {
-            drinnen: [{t:"Hörspiel", i:"music"}, {t:"Lego bauen", i:"widgets"}, {t:"Comic lesen", i:"book-open"}, {t:"Etwas reparieren", i:"wrench"}, {t:"Anleitung schreiben", i:"notes"}, {t:"Mini-Projekt", i:"flag"}],
-            draussen: [{t:"Velo", i:"bicycle"}, {t:"Wald", i:"tree"}, {t:"Tiere", i:"eye"}, {t:"Demonstration", i:"users"}, {t:"Picknick", i:"coffee"}, {t:"Schatzsuche", i:"map"}],
-            lernen: [{t:"Mathe", i:"plus"}, {t:"Quiz", i:"help"}, {t:"Mindmap", i:"git-branch"}, {t:"Sachbuch", i:"book"}, {t:"Vokabeln", i:"translate"}, {t:"Experiment", i:"flask"}]
+            drinnen: ["Hörspiel hören", "Lego bauen", "Comic lesen", "Etwas reparieren", "Anleitung schreiben", "Mini-Projekt"],
+            draussen: ["Velo fahren", "Wald erkunden", "Tiere beobachten", "Demonstration", "Picknick machen", "Schatzsuche"],
+            lernen: ["Mathe üben", "Quiz lösen", "Mindmap erstellen", "Sachbuch lesen", "Vokabeln lernen", "Experiment machen"]
         };
         const comicWords = ["BOOM!", "POW!", "ZAP!", "WOW!", "CRACK!"];
         const suits = ["♥", "♦", "♣", "♠"];
@@ -226,8 +253,7 @@
                 
                 front.innerHTML = `
                     <div class="suit top-left">${randomSuit}</div>
-                    <div class="card-top-half"><i class="pai pai-${item.i} pixel-icon"></i></div>
-                    <div class="card-bottom-half"><div class="text-content">${item.t}</div></div>
+                    <div class="text-content">${item}</div>
                     <div class="suit bottom-right">${randomSuit}</div>
                 `;
                 
