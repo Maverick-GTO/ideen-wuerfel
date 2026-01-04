@@ -3,99 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>D12 Fantasy-Würfel</title>
+    <title>Magische Karten</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        :root { 
-            --glow-color: #00d2ff; /* Magisches Blau */
-            --gold-color: #ffd700; /* Goldener Glanz */
-            --bg-dark: #050510; /* Sehr dunkler Hintergrund */
-        }
-        body { margin: 0; background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg-dark) 100%); color: #fff; font-family: 'Cinzel', serif; /* Fantasy-Schriftart */ display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        
-        /* Link für eine passende Fantasy-Schriftart von Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
 
-        /* --- Die Bühne mit Zoom-Effekt --- */
-        .scene-container {
-            width: 300px; height: 300px;
-            perspective: 1200px;
-            display: flex; align-items: center; justify-content: center;
-            transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        /* Diese Klasse wird hinzugefügt, um hereinzuzoomen */
-        .scene-container.zoomed {
-            transform: scale(1.8) translateZ(100px);
+        :root {
+            --gold: #ffd700;
+            --magic-blue: #00d2ff;
+            --bg: #050510;
         }
 
-        /* --- Der D12 Würfel --- */
-        #dice { 
-            width: 140px; height: 140px; 
-            position: relative; 
-            transform-style: preserve-3d; 
-            transform: rotateX(-20deg) rotateY(20deg); 
-            transition: transform 3s cubic-bezier(0.1, 0, 0.2, 1); /* Schneller Start, langsames Ende */
+        body {
+            margin: 0;
+            background: radial-gradient(circle, #1a1a2e 0%, var(--bg) 100%);
+            color: #fff;
+            font-family: 'Cinzel', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* --- Fantasy-Flächen --- */
-        .face { 
-            position: absolute; width: 140px; height: 140px; 
-            /* Magischer Edelstein-Look */
-            background: linear-gradient(135deg, rgba(0, 40, 80, 0.8), rgba(60, 0, 90, 0.8));
-            border: 2px solid var(--glow-color);
-            box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.5), 0 0 15px var(--glow-color);
-            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-            backface-visibility: visible;
-            /* Subtiler Runen-Effekt */
-            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 10 L90 40 L80 90 L20 90 L10 40 Z" fill="none" stroke="rgba(255,215,0,0.2)" stroke-width="1"/></svg>');
-            background-size: cover;
+        /* Karten-Stapel-Container */
+        .deck {
+            position: relative;
+            width: 200px;
+            height: 300px;
+            perspective: 1000px;
         }
 
-        /* --- Magisches Ergebnis-Tablet --- */
-        #overlay { 
-            position: absolute; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%) scale(0.8); opacity: 0;
-            /* Pergament / Magisches Tablet Look */
-            background: linear-gradient(to bottom, #1a1a2e, #0f0f1a);
-            border: 3px solid var(--gold-color);
-            box-shadow: 0 0 30px var(--glow-color), inset 0 0 20px rgba(255, 215, 0, 0.2);
-            padding: 30px; border-radius: 15px; 
-            text-align: center; width: 85%; max-width: 450px;
-            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); /* "Pop"-Effekt */
-            z-index: 100; pointer-events: none;
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            box-sizing: border-box;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            backface-visibility: hidden;
+            cursor: pointer;
+            user-select: none;
         }
-        #overlay.active { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
-        
-        #overlay h2 { color: var(--gold-color); font-size: 16px; margin: 0 0 15px 0; letter-spacing: 3px; text-shadow: 0 0 10px var(--gold-color); }
-        #result-text { font-size: 28px; font-weight: bold; color: #fff; text-shadow: 0 0 15px var(--glow-color); line-height: 1.3; }
 
-        /* --- Fantasy-Button --- */
-        button { 
-            position: absolute; bottom: 50px;
-            padding: 15px 60px; font-size: 22px; font-family: 'Cinzel', serif;
-            background: linear-gradient(to right, rgba(0,0,0,0.5), rgba(0, 40, 80, 0.5));
-            color: var(--gold-color); 
-            border: 2px solid var(--gold-color); border-radius: 8px;
-            cursor: pointer; text-transform: uppercase; letter-spacing: 3px; font-weight: bold;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-            transition: 0.3s; z-index: 50;
+        /* Karten-Rückseite (Fantasy-Muster) */
+        .card-back {
+            background: linear-gradient(135deg, #1a1a2e, #050510);
+            border: 4px double var(--gold);
+            z-index: 2;
         }
-        button:active { transform: scale(0.95); background: var(--gold-color); color: #000; box-shadow: 0 0 40px var(--gold-color); }
+
+        .card-back::after {
+            content: "✧";
+            font-size: 50px;
+            color: var(--gold);
+            text-shadow: 0 0 10px var(--gold);
+        }
+
+        /* Karten-Vorderseite */
+        .card-front {
+            transform: rotateY(180deg);
+            background: linear-gradient(145deg, #1a1a2e, #2a2a4e);
+            color: var(--gold);
+            font-size: 20px;
+            text-shadow: 0 0 5px #000;
+            z-index: 1;
+        }
+
+        /* Animationen */
+        .shuffle {
+            animation: shuffle-anim 0.8s ease-in-out infinite;
+        }
+
+        @keyframes shuffle-anim {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            50% { transform: translateX(150px) rotate(10deg); z-index: 1; }
+        }
+
+        .drawn {
+            transform: scale(1.4) translateY(-50px) rotateY(180deg) !important;
+            z-index: 100 !important;
+            box-shadow: 0 0 40px var(--magic-blue);
+            border-color: var(--magic-blue);
+        }
+
+        button {
+            margin-top: 80px;
+            padding: 15px 40px;
+            font-family: 'Cinzel', serif;
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            font-size: 22px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+            z-index: 100;
+        }
+
+        button:active { transform: scale(0.9); background: var(--gold); color: #000; }
     </style>
 </head>
 <body>
 
-    <div class="scene-container" id="scene-container">
-        <div id="dice"></div>
-    </div>
+    <div class="deck" id="deck">
+        </div>
 
-    <div id="overlay" onclick="closeOverlay()">
-        <h2>DEIN SCHICKSAL</h2>
-        <div id="result-text"></div>
-        <div style="margin-top: 25px; font-size: 12px; color: rgba(255,255,255,0.5);">TIPPEN ZUM SCHLIESSEN</div>
-    </div>
-
-    <button id="roll-button" onclick="roll()">GO</button>
+    <button id="actionBtn" onclick="drawCard()">Mischen & Ziehen</button>
 
     <script>
         const phrases = [
@@ -105,64 +128,65 @@
             "Lern-Quiz", "Zimmer Aufräumen"
         ];
 
-        const dice = document.getElementById('dice');
-        const overlay = document.getElementById('overlay');
-        const resultText = document.getElementById('result-text');
-        const sceneContainer = document.getElementById('scene-container');
-        const rollButton = document.getElementById('roll-button');
-        let isRolling = false;
+        const deck = document.getElementById('deck');
+        const btn = document.getElementById('actionBtn');
+        let cards = [];
 
-        // Mathematische Positionen für den Dodekaeder (korrigiert für die neue Grösse)
-        const angles = [
-            [90, 0], [-90, 0], 
-            [26.57, 0], [26.57, 72], [26.57, 144], [26.57, 216], [26.57, 288],
-            [-26.57, 36], [-26.57, 108], [-26.57, 180], [-26.57, 252], [-26.57, 324]
-        ];
-        const translateZ = 95; // Angepasst für die neue Flächengrösse
+        // Karten erstellen
+        function createDeck() {
+            deck.innerHTML = '';
+            cards = [];
+            for (let i = 0; i < 12; i++) {
+                const cardCont = document.createElement('div');
+                cardCont.style.position = 'absolute';
+                cardCont.style.width = '100%';
+                cardCont.style.height = '100%';
+                cardCont.style.transform = `translateZ(${-i * 2}px) rotate(${Math.random() * 4 - 2}deg)`;
+                
+                const back = document.createElement('div');
+                back.className = 'card card-back';
+                
+                const front = document.createElement('div');
+                front.className = 'card card-front';
+                front.innerText = phrases[i];
 
-        for (let i = 0; i < 12; i++) {
-            const face = document.createElement('div');
-            face.className = 'face';
-            face.style.transform = `rotateY(${angles[i][1]}deg) rotateX(${angles[i][0]}deg) translateZ(${translateZ}px)`;
-            dice.appendChild(face);
+                cardCont.appendChild(back);
+                cardCont.appendChild(front);
+                deck.appendChild(cardCont);
+                cards.push(cardCont);
+            }
         }
 
-        function roll() {
-            if (isRolling) return;
-            isRolling = true;
-            rollButton.style.pointerEvents = 'none'; // Button deaktivieren während des Wurfs
+        function drawCard() {
+            // Falls schon eine Karte gezogen ist, Reset
+            createDeck();
+            
+            // Mischen-Animation
+            cards.forEach((c, idx) => {
+                setTimeout(() => c.classList.add('shuffle'), idx * 50);
+            });
 
-            // 1. Reset: Zoom weg, Overlay weg
-            closeOverlay();
-
-            // 2. Würfel animation starten
-            const rx = Math.floor(Math.random() * 1440) + 720; // Mindestens 2 volle Umdrehungen
-            const ry = Math.floor(Math.random() * 1440) + 720;
-            dice.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-
-            // 3. Nach Ende der Animation (3s)
             setTimeout(() => {
-                // Zufälligen Spruch wählen
-                const randomIdx = Math.floor(Math.random() * phrases.length);
-                resultText.innerText = phrases[randomIdx];
+                // Mischen stoppen
+                cards.forEach(c => c.classList.remove('shuffle'));
+
+                // Zufällige Karte ziehen
+                const randomIdx = Math.floor(Math.random() * 12);
+                const selected = cards[randomIdx];
                 
-                // Zoom-Effekt aktivieren
-                sceneContainer.classList.add('zoomed');
-                
-                // Ergebnis-Tablet anzeigen
-                overlay.classList.add('active');
-                
-                isRolling = false;
-                rollButton.style.pointerEvents = 'auto'; // Button wieder aktivieren
-            }, 3000);
+                // Spruch neu mischen, damit es jedes Mal anders ist
+                const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+                selected.querySelector('.card-front').innerText = randomPhrase;
+
+                selected.classList.add('drawn');
+            }, 1500);
         }
 
-        function closeOverlay() {
-            overlay.classList.remove('active');
-            sceneContainer.classList.remove('zoomed');
-        }
+        createDeck();
 
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
     </script>
 </body>
 </html>
