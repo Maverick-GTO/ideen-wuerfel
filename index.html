@@ -12,110 +12,64 @@
             --poker-red: #af0000;
             --poker-black: #1a1a1a;
             --gold: #c5a059;
-            --magic-bg: #050510;
         }
 
         body {
             margin: 0;
-            background: radial-gradient(circle, #1a1a2e 0%, var(--magic-bg) 100%);
+            background: radial-gradient(circle, #1a1a2e 0%, #050510 100%);
             color: #fff;
             font-family: 'Cinzel', serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
         }
 
-        .deck {
-            position: relative;
-            width: 220px;
-            height: 320px;
-            perspective: 1200px;
-        }
+        .deck { position: relative; width: 220px; height: 320px; perspective: 1200px; }
 
         .card-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            position: absolute; width: 100%; height: 100%;
+            transform-style: preserve-3d; transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .card {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            text-align: center;
-            box-sizing: border-box;
-            border: 2px solid var(--gold);
+            position: absolute; width: 100%; height: 100%; border-radius: 12px;
+            backface-visibility: hidden; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 25px;
+            text-align: center; box-sizing: border-box; border: 2px solid var(--gold);
         }
 
-        /* Rückseite: Fantasy-Muster */
+        /* Rückseite: Fantasy-Stil */
         .card-back {
-            background: linear-gradient(135deg, #1a1a2e, #050510);
-            z-index: 2;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            background: linear-gradient(135deg, #1a1a2e, #050510); z-index: 2;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
             background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 5 L95 50 L50 95 L5 50 Z" fill="none" stroke="%23c5a059" stroke-width="2"/></svg>');
-            background-size: 50px 50px;
+            background-size: 60px 60px;
         }
 
-        /* Vorderseite: Pergament-Look */
+        /* Vorderseite: Pergament-Poker */
         .card-front {
-            background: #e8d5b5; /* Pergamentfarbe */
-            color: #000;
-            transform: rotateY(180deg);
-            z-index: 1;
-            font-weight: bold;
-            font-size: 20px;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.2);
+            background: #e8d5b5; color: #000; transform: rotateY(180deg); z-index: 1;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.2);
         }
 
-        .suit { position: absolute; font-size: 32px; opacity: 0.8; }
+        .suit { position: absolute; font-size: 35px; opacity: 0.9; }
         .top-left { top: 10px; left: 10px; }
         .bottom-right { bottom: 10px; right: 10px; transform: rotate(180deg); }
 
-        .shuffle {
-            animation: shuffle-move 0.5s ease-in-out infinite;
-        }
-
-        @keyframes shuffle-move {
-            0%, 100% { transform: translateX(0) rotate(0); }
-            50% { transform: translateX(140px) rotate(12deg) translateZ(50px); }
-        }
+        .shuffle { animation: shuffle-move 0.5s ease-in-out infinite; }
+        @keyframes shuffle-move { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(140px) rotate(12deg); } }
 
         .drawn {
             transform: scale(1.35) translateY(-30px) rotateY(180deg) !important;
-            z-index: 1000 !important;
-            box-shadow: 0 0 40px rgba(0, 210, 255, 0.6);
+            z-index: 1000 !important; box-shadow: 0 0 50px rgba(0, 210, 255, 0.6);
             border: 3px solid #00d2ff !important;
         }
 
         button {
-            margin-top: 50px;
-            padding: 15px 50px;
-            background: transparent;
-            color: var(--gold);
-            border: 2px solid var(--gold);
-            font-family: 'Cinzel', serif;
-            font-size: 22px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: 0.3s;
-            z-index: 100;
+            margin-top: 60px; padding: 15px 50px; background: transparent;
+            color: var(--gold); border: 2px solid var(--gold); font-family: 'Cinzel', serif;
+            font-size: 22px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
         }
-
         button:active { background: var(--gold); color: #000; }
-        button:disabled { opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -143,60 +97,38 @@
 
         const deck = document.getElementById('deck');
         const btn = document.getElementById('actionBtn');
-        let cardElements = [];
 
         function createDeck() {
             deck.innerHTML = '';
-            cardElements = [];
             for (let i = 0; i < 10; i++) {
                 const container = document.createElement('div');
                 container.className = 'card-container';
                 container.style.transform = `translateZ(${-i * 3}px)`;
-                const back = document.createElement('div');
-                back.className = 'card card-back';
-                const front = document.createElement('div');
-                front.className = 'card card-front';
-                container.appendChild(back);
-                container.appendChild(front);
+                container.innerHTML = `<div class="card card-back"></div><div class="card card-front"></div>`;
                 deck.appendChild(container);
-                cardElements.push(container);
             }
-        }
-
-        function playSound(file) {
-            const audio = new Audio(file);
-            audio.play().catch(e => console.log("Audio-Fehler: ", e));
         }
 
         function drawCard() {
             btn.disabled = true;
-            
-            // Mischen-Sound
             const soundNum = Math.floor(Math.random() * 3) + 1;
-            playSound(`shuffle${soundNum}.mp3`);
+            new Audio(`shuffle${soundNum}.mp3`).play().catch(() => {});
 
             createDeck();
-            cardElements.forEach((c, idx) => {
-                setTimeout(() => c.classList.add('shuffle'), idx * 30);
-            });
+            const cards = document.querySelectorAll('.card-container');
+            cards.forEach((c, idx) => setTimeout(() => c.classList.add('shuffle'), idx * 30));
 
             setTimeout(() => {
-                cardElements.forEach(c => c.classList.remove('shuffle'));
-                
-                // Ziehen-Sound
-                playSound('draw.mp3');
+                cards.forEach(c => c.classList.remove('shuffle'));
+                new Audio('draw.mp3').play().catch(() => {});
 
-                const selected = cardElements[Math.floor(Math.random() * cardElements.length)];
+                const selected = cards[Math.floor(Math.random() * cards.length)];
                 const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
                 const randomSuit = suits[Math.floor(Math.random() * 4)];
 
                 const front = selected.querySelector('.card-front');
                 front.style.color = randomSuit.c;
-                front.innerHTML = `
-                    <div class="suit top-left">${randomSuit.s}</div>
-                    <div style="padding: 0 15px;">${randomPhrase}</div>
-                    <div class="suit bottom-right">${randomSuit.s}</div>
-                `;
+                front.innerHTML = `<div class="suit top-left">${randomSuit.s}</div><div>${randomPhrase}</div><div class="suit bottom-right">${randomSuit.s}</div>`;
 
                 selected.classList.add('drawn');
                 btn.disabled = false;
@@ -204,10 +136,6 @@
         }
 
         createDeck();
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
     </script>
 </body>
 </html>
