@@ -19,131 +19,124 @@
         body {
             margin: 0;
             background-color: var(--bg-dark-blue);
-            /* Kleine Punkte im Hintergrund */
             background-image: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="15" r="5.5" fill="%234da6ff"/><circle cx="45" cy="15" r="5.5" fill="%23ffffff"/><circle cx="15" cy="45" r="5.5" fill="%23ff66b3"/><circle cx="45" cy="45" r="5.5" fill="%239933ff"/></svg>');
             background-size: 60px 60px;
             color: var(--pop-black);
-            font-family: 'Bangers', cursive; /* Einheitliche Comic-Schrift */
+            font-family: 'Bangers', cursive;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             height: 100vh; overflow: hidden;
         }
 
-        /* Karten-Stapel etwas grösser gemacht */
-        .deck { 
-            position: relative; 
-            width: 270px; 
-            height: 380px; 
-            perspective: 1200px; 
+        /* Kategorien-Auswahl oben */
+        .controls {
+            display: flex; gap: 10px; margin-bottom: 20px; z-index: 100;
         }
+        .cat-btn {
+            padding: 10px 15px; font-family: 'Bangers', cursive; font-size: 18px;
+            border: 3px solid var(--pop-black); cursor: pointer; text-transform: uppercase;
+            box-shadow: 4px 4px 0 var(--pop-black); transition: 0.1s;
+        }
+        #btn-drinnen { background: var(--pop-yellow); }
+        #btn-draussen { background: #00ff00; }
+        #btn-lernen { background: #00d2ff; }
+        .cat-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--pop-black); }
 
+        /* Karten-Stapel */
+        .deck { position: relative; width: 280px; height: 390px; perspective: 1200px; }
         .card-container {
             position: absolute; width: 100%; height: 100%;
             transform-style: preserve-3d; transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
-
         .card {
             position: absolute; width: 100%; height: 100%; border-radius: 15px;
             backface-visibility: hidden; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; padding: 20px;
+            align-items: center; justify-content: center; padding: 25px;
             text-align: center; box-sizing: border-box; border: 5px solid var(--pop-black);
-            box-shadow: 7px 7px 0px var(--pop-black); background-color: #fff;
+            box-shadow: 8px 8px 0px var(--pop-black); background-color: #fff;
         }
-
         .card-back {
             background-color: var(--pop-blue);
             background-image: radial-gradient(var(--pop-black) 20%, transparent 21%);
             background-size: 15px 15px; z-index: 2;
         }
-        
         .card-back::after {
-            content: '★'; font-size: 90px; color: var(--pop-yellow);
-            -webkit-text-stroke: 3px var(--pop-black); text-shadow: 4px 4px 0 var(--pop-black);
+            content: '★'; font-size: 100px; color: var(--pop-yellow);
+            -webkit-text-stroke: 3px var(--pop-black); text-shadow: 5px 5px 0 var(--pop-black);
         }
-
         .card-front {
             background-image: radial-gradient(rgba(230, 0, 0, 0.1) 15%, transparent 16%);
-            background-size: 10px 10px; 
-            color: var(--pop-black); /* Massive schwarze Schrift wie im Button */
-            transform: rotateY(180deg); 
-            z-index: 1; 
-            font-size: 34px; /* Grössere Schrift für bessere Lesbarkeit */
-            line-height: 1.1; 
-            text-transform: uppercase;
-            
-            /* Keine doppelte Schrift/Umrandung mehr */
-            -webkit-text-stroke: 0;
-            text-shadow: none;
-
-            /* Silbentrennung */
-            hyphens: auto; -webkit-hyphens: auto; -ms-hyphens: auto;
-            word-break: break-word; overflow-wrap: break-word;
+            background-size: 12px 12px; color: var(--pop-black);
+            transform: rotateY(180deg); z-index: 1; font-size: 34px; line-height: 1.15;
+            text-transform: uppercase; hyphens: auto; -webkit-hyphens: auto; word-break: break-word;
         }
-
-        .text-content {
-            max-width: 100%; padding: 0 5px;
-            display: flex; align-items: center; justify-content: center; min-height: 180px;
-        }
-
-        .suit { 
-            position: absolute; font-size: 45px; color: var(--pop-red);
-            -webkit-text-stroke: 2px var(--pop-black); text-shadow: 2px 2px 0 var(--pop-black);
-        }
+        .text-content { max-width: 100%; display: flex; align-items: center; justify-content: center; min-height: 200px; }
+        .suit { position: absolute; font-size: 48px; color: var(--pop-red); -webkit-text-stroke: 2px var(--pop-black); text-shadow: 2px 2px 0 var(--pop-black); }
         .top-left { top: 15px; left: 15px; }
         .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
 
+        /* Comic-Effekte */
+        .comic-effect {
+            position: absolute; pointer-events: none; opacity: 0; z-index: 2000;
+            font-size: 60px; color: var(--pop-yellow); -webkit-text-stroke: 3px var(--pop-black);
+            text-shadow: 5px 5px 0 var(--pop-black); transform: scale(0) rotate(-10deg);
+        }
+        @keyframes boom-anim {
+            0% { opacity: 0; transform: scale(0) rotate(-10deg); }
+            50% { opacity: 1; transform: scale(1.5) rotate(5deg); }
+            100% { opacity: 0; transform: scale(1.2) rotate(10deg); }
+        }
+        .boom-active { animation: boom-anim 0.8s forwards; }
+
         .shuffle { animation: shuffle-move 0.4s ease-in-out infinite; }
-        @keyframes shuffle-move { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(110px) rotate(8deg); } }
-
-        .drawn {
-            transform: scale(1.1) translateY(-20px) rotateY(180deg) !important;
-            z-index: 1000 !important; box-shadow: 15px 15px 0px rgba(0,0,0,0.5) !important;
-        }
-
-        button {
-            margin-top: 50px; padding: 15px 45px; background-color: var(--pop-yellow);
-            color: var(--pop-black); border: 4px solid var(--pop-black); 
-            font-family: 'Bangers', cursive; font-size: 28px; cursor: pointer; 
-            text-transform: uppercase; letter-spacing: 2px; transition: 0.1s;
-            box-shadow: 6px 6px 0px var(--pop-black);
-        }
-        button:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0px var(--pop-black); }
-        button:disabled { opacity: 0.5; }
+        @keyframes shuffle-move { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(120px) rotate(10deg); } }
+        .drawn { transform: scale(1.1) translateY(-20px) rotateY(180deg) !important; z-index: 1000 !important; box-shadow: 20px 20px 0px rgba(0,0,0,0.5) !important; }
     </style>
 </head>
 <body>
+    <div class="controls">
+        <button class="cat-btn" id="btn-drinnen" onclick="drawCard('drinnen')">Drinnen</button>
+        <button class="cat-btn" id="btn-draussen" onclick="drawCard('draussen')">Draussen</button>
+        <button class="cat-btn" id="btn-lernen" onclick="drawCard('lernen')">Lernen</button>
+    </div>
+
     <div class="deck" id="deck"></div>
-    <button id="actionBtn" onclick="drawCard()">Mischen & Ziehen</button>
+    <div id="comic-boom" class="comic-effect">BOOM!</div>
+    <div id="comic-pow" class="comic-effect" style="color: #ff00ff;">POW!</div>
 
     <script>
-        const phrases = [
-            "Hörspiel hören", "Checker&shy;sendung schauen", "Comic lesen", "Spannendes Buch lesen",
-            "Rätsel lösen", "Quiz spielen", "Lego bauen", "Fantasie&shy;geschichte erfinden",
-            "Zeichnen oder malen", "Basteln mit Recycling&shy;material", "Origami falten", "Modell bauen",
-            "Puzzle lösen", "Karten&shy;trick zeigen", "Geschicklich&shy;keits&shy;spiel", "Jonglieren üben",
-            "Musik hören", "Instrument spielen", "Lied vorsingen", "Foto machen",
-            "Kurzes Video drehen", "Draussen spielen", "Park oder Wald erkunden", "Tiere beobachten",
-            "Pflanzen bestimmen", "Schatzsuche organisieren", "Abfall sammeln", "Müll trennen",
-            "Freundin anrufen", "Nachbarn klingeln", "Vortrag halten", "Etwas erklären",
-            "Mini-Interview", "Tagebuch schreiben", "Eigene Idee umsetzen", "Projekt starten"
-        ];
+        const data = {
+            drinnen: ["Hörspiel hören", "Hörbuch hören", "Lieblingssendung schauen", "Comic lesen", "Spannendes Buch lesen", "Lego-Stadt bauen", "Fantasiefigur erfinden", "Geschichte schreiben", "Tagebuch führen", "Zeichnen oder malen", "Basteln mit Karton", "Basteln mit Recyclingmaterial", "Origami falten", "Puzzle lösen", "Gesellschaftsspiel spielen", "Kartentrick lernen", "Zaubertrick vorführen", "Jonglieren üben", "Musikinstrument spielen", "Lied singen", "Tanz erfinden", "Foto machen", "Kurzen Film drehen", "Zimmer umgestalten", "Etwas reparieren", "Modell bauen", "Experiment durchführen", "Quiz spielen", "Rätsel lösen", "Koch- oder Backhilfe leisten", "Anleitung schreiben", "Spiel erklären", "Präsentation vorbereiten", "Eigene Idee umsetzen", "Mini-Projekt starten", "Kreative Challenge erfinden"],
+            draussen: ["Draussen frei spielen", "Boggia spielen", "Velofahren", "Skateboard fahren", "Spaziergang machen", "Wald erkunden", "Park entdecken", "Tiere beobachten", "Pflanzen bestimmen", "Blätter sammeln", "Steine sammeln", "Naturtagebuch führen", "Schatzsuche machen", "Abfall sammeln", "Müll sortieren", "Umweltplakat gestalten", "Kreidezeichnungen", "Demonstration teilnehmen", "Museum besuchen", "Hindernisparcours bauen", "Picknick", "Draussen lesen", "Draussen malen", "Foto-Challenge", "Wolken beobachten", "Sterne zählen", "Wetter beobachten", "Blumen pflanzen", "Ins Kino gehen", "Vögel beobachten", "Nachbarn grüssen", "Nachbarn klingeln", "Freundin anrufen", "Mini-Interview", "Aufführung draussen", "Abenteuer-Spiel"],
+            lernen: ["Sachbuch lesen", "Wissensvideo schauen", "Dokumentation schauen", "Thema recherchieren", "Kurzen Vortrag halten", "Referat vorbereiten", "Mindmap erstellen", "Quiz erfinden", "Quiz lösen", "Logikrätsel lösen", "Knobelaufgabe", "Mathe-Spiel spielen", "Lern-App nutzen", "Vokabeln lernen", "Fremdsprache hören", "Fremdsprache sprechen", "Experiment planen", "Experiment auswerten", "Beobachtungen notieren", "Diagramm zeichnen", "Zeitachse erstellen", "Sachthema erklären", "Lernplakat gestalten", "Lernkarteikarten", "Zusammenfassung", "Präsentation halten", "Lernspiel erklären", "Anderen beibringen", "Interview vorbereiten", "Interview durchführen", "Fragen formulieren", "Diskussion führen", "Meinung begründen", "Lernziel festlegen", "Lernprojekt planen", "Lernprojekt abschliessen"]
+        };
 
         const suits = ["♥", "♦", "♣", "♠"];
         const deck = document.getElementById('deck');
-        const btn = document.getElementById('actionBtn');
+        const btns = document.querySelectorAll('.cat-btn');
 
-        function playMagicSound() {
+        function playCardSound() {
             try {
                 const context = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = context.createOscillator();
                 const gain = context.createGain();
-                oscillator.type = 'triangle';
-                oscillator.frequency.setValueAtTime(330, context.currentTime); 
-                oscillator.frequency.exponentialRampToValueAtTime(440, context.currentTime + 0.2); 
-                gain.gain.setValueAtTime(0.1, context.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.6);
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(150, context.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(40, context.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.5, context.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.15);
                 oscillator.connect(gain); gain.connect(context.destination);
-                oscillator.start(); oscillator.stop(context.currentTime + 0.6);
+                oscillator.start(); oscillator.stop(context.currentTime + 0.15);
+                if (navigator.vibrate) { navigator.vibrate(40); }
             } catch (e) {}
+        }
+
+        function triggerComicEffect() {
+            if (Math.random() > 0.4) return; // 40% Chance
+            const effectId = Math.random() > 0.5 ? 'comic-boom' : 'comic-pow';
+            const el = document.getElementById(effectId);
+            el.classList.remove('boom-active');
+            void el.offsetWidth; // Reset animation
+            el.classList.add('boom-active');
         }
 
         function createDeck() {
@@ -157,19 +150,20 @@
             }
         }
 
-        function drawCard() {
-            if (btn.disabled) return;
-            btn.disabled = true;
+        function drawCard(category) {
+            btns.forEach(b => b.disabled = true);
             createDeck();
             const cards = document.querySelectorAll('.card-container');
             cards.forEach((c, idx) => setTimeout(() => c.classList.add('shuffle'), idx * 50));
 
             setTimeout(() => {
                 cards.forEach(c => c.classList.remove('shuffle'));
-                playMagicSound();
+                playCardSound();
+                triggerComicEffect();
+
                 const selected = cards[Math.floor(Math.random() * cards.length)];
-                const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-                const randomSuit = suits[Math.floor(Math.random() * suits.length)];
+                const randomPhrase = data[category][Math.floor(Math.random() * 36)];
+                const randomSuit = suits[Math.floor(Math.random() * 4)];
                 const front = selected.querySelector('.card-front');
                 
                 front.innerHTML = `
@@ -178,8 +172,8 @@
                     <div class="suit bottom-right">${randomSuit}</div>
                 `;
                 selected.classList.add('drawn');
-                btn.disabled = false;
-            }, 1200);
+                btns.forEach(b => b.disabled = false);
+            }, 1000);
         }
 
         window.onload = createDeck;
