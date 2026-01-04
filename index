@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Magische Schicksalskarten</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
+
+        :root {
+            --poker-red: #af0000;
+            --poker-black: #1a1a1a;
+            --gold: #c5a059;
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(circle, #1a1a2e 0%, #050510 100%);
+            color: #fff;
+            font-family: 'Cinzel', serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        .deck { position: relative; width: 220px; height: 320px; perspective: 1200px; }
+
+        .card-container {
+            position: absolute; width: 100%; height: 100%;
+            transform-style: preserve-3d; transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .card {
+            position: absolute; width: 100%; height: 100%; border-radius: 12px;
+            backface-visibility: hidden; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 20px;
+            text-align: center; box-sizing: border-box; border: 2px solid var(--gold);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #1a1a2e, #050510); z-index: 2;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 5 L95 50 L50 95 L5 50 Z" fill="none" stroke="%23c5a059" stroke-width="2"/></svg>');
+            background-size: 60px 60px;
+        }
+
+        .card-front {
+            background: #e8d5b5; color: #000; transform: rotateY(180deg); z-index: 1;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.2);
+            font-size: 26px;
+            line-height: 1.2;
+        }
+
+        .suit { position: absolute; font-size: 35px; opacity: 0.9; }
+        .top-left { top: 10px; left: 10px; }
+        .bottom-right { bottom: 10px; right: 10px; transform: rotate(180deg); }
+
+        .shuffle { animation: shuffle-move 0.4s ease-in-out infinite; }
+        @keyframes shuffle-move { 
+            0%, 100% { transform: translateX(0); } 
+            50% { transform: translateX(120px) rotate(10deg); } 
+        }
+
+        .drawn {
+            transform: scale(1.35) translateY(-30px) rotateY(180deg) !important;
+            z-index: 1000 !important; box-shadow: 0 0 50px rgba(0,
