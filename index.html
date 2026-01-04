@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Magische Karten (Pop-Art)</title>
+    <title>Magische Karten</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
     <style>
@@ -12,14 +12,14 @@
             --pop-yellow: #ffd700;
             --pop-blue: #0000ff;
             --pop-black: #000000;
-            --bg-dark-blue: #060633; /* Etwas dunkleres Blau */
+            --bg-dark-blue: #040426;
         }
 
         body {
             margin: 0;
             background-color: var(--bg-dark-blue);
-            /* Punkte um 30% verkleinert (Radius von 9 auf 7.5) */
-            background-image: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="15" r="7.5" fill="%234da6ff"/><circle cx="45" cy="15" r="7.5" fill="%23ffffff"/><circle cx="15" cy="45" r="7.5" fill="%23ff66b3"/><circle cx="45" cy="45" r="7.5" fill="%239933ff"/></svg>');
+            /* Punkte verkleinert: Radius von 7.5 auf 5.5 */
+            background-image: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="15" r="5.5" fill="%234da6ff"/><circle cx="45" cy="15" r="5.5" fill="%23ffffff"/><circle cx="15" cy="45" r="5.5" fill="%23ff66b3"/><circle cx="45" cy="45" r="5.5" fill="%239933ff"/></svg>');
             background-size: 60px 60px;
             color: var(--pop-black);
             font-family: 'Arial Black', 'Impact', sans-serif;
@@ -27,12 +27,7 @@
             height: 100vh; overflow: hidden;
         }
 
-        .deck { 
-            position: relative; 
-            width: 240px; 
-            height: 340px; 
-            perspective: 1200px; 
-        }
+        .deck { position: relative; width: 240px; height: 340px; perspective: 1200px; }
 
         .card-container {
             position: absolute; width: 100%; height: 100%;
@@ -40,118 +35,82 @@
         }
 
         .card {
-            position: absolute; width: 100%; height: 100%; 
-            border-radius: 15px;
+            position: absolute; width: 100%; height: 100%; border-radius: 15px;
             backface-visibility: hidden; display: flex; flex-direction: column;
             align-items: center; justify-content: center; padding: 20px;
-            text-align: center; box-sizing: border-box; 
-            border: 5px solid var(--pop-black);
-            box-shadow: 7px 7px 0px var(--pop-black);
-            background-color: #fff;
+            text-align: center; box-sizing: border-box; border: 5px solid var(--pop-black);
+            box-shadow: 7px 7px 0px var(--pop-black); background-color: #fff;
         }
 
         .card-back {
             background-color: var(--pop-blue);
             background-image: radial-gradient(var(--pop-black) 20%, transparent 21%);
-            background-size: 15px 15px;
-            z-index: 2;
+            background-size: 15px 15px; z-index: 2;
         }
         
         .card-back::after {
-            content: '★';
-            font-size: 80px;
-            color: var(--pop-yellow);
-            -webkit-text-stroke: 3px var(--pop-black);
-            text-shadow: 3px 3px 0 var(--pop-black);
+            content: '★'; font-size: 80px; color: var(--pop-yellow);
+            -webkit-text-stroke: 3px var(--pop-black); text-shadow: 3px 3px 0 var(--pop-black);
         }
 
         .card-front {
-            background-image: radial-gradient(rgba(230, 0, 0, 0.2) 15%, transparent 16%);
-            background-size: 10px 10px;
-            color: #fff;
-            transform: rotateY(180deg); 
-            z-index: 1;
-            font-size: 26px; /* Leicht angepasst für bessere Passform */
-            line-height: 1.1;
-            text-transform: uppercase;
-            -webkit-text-stroke: 2px var(--pop-black);
-            text-shadow: 3px 3px 0 var(--pop-black);
+            background-image: radial-gradient(rgba(230, 0, 0, 0.15) 15%, transparent 16%);
+            background-size: 10px 10px; color: #fff; transform: rotateY(180deg); 
+            z-index: 1; font-size: 24px; line-height: 1.1; text-transform: uppercase;
+            -webkit-text-stroke: 1.8px var(--pop-black); text-shadow: 3px 3px 0 var(--pop-black);
             
-            /* Silbentrennung & Umbruch-Logik */
-            hyphens: auto;
-            -webkit-hyphens: auto;
-            word-break: normal;
-            overflow-wrap: break-word;
+            /* Optimierte Silbentrennung */
+            hyphens: auto; -webkit-hyphens: auto; -ms-hyphens: auto;
+            word-break: break-word; overflow-wrap: break-word;
         }
 
         .text-content {
-            max-width: 95%;
-            padding: 0 5px;
-            /* Sorgt dafür, dass der Text sauber zentriert bleibt */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 150px;
+            max-width: 100%; padding: 0 2px;
+            display: flex; align-items: center; justify-content: center; min-height: 160px;
         }
 
         .suit { 
-            position: absolute; 
-            font-size: 40px; 
-            color: var(--pop-red);
-            -webkit-text-stroke: 2px var(--pop-black);
-            text-shadow: 2px 2px 0 var(--pop-black);
+            position: absolute; font-size: 40px; color: var(--pop-red);
+            -webkit-text-stroke: 2px var(--pop-black); text-shadow: 2px 2px 0 var(--pop-black);
         }
         .top-left { top: 15px; left: 15px; }
         .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
 
         .shuffle { animation: shuffle-move 0.4s ease-in-out infinite; }
-        @keyframes shuffle-move { 
-            0%, 100% { transform: translateX(0); } 
-            50% { transform: translateX(120px) rotate(10deg); } 
-        }
+        @keyframes shuffle-move { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(110px) rotate(8deg); } }
 
         .drawn {
             transform: scale(1.1) translateY(-30px) rotateY(180deg) !important;
-            z-index: 1000 !important; 
-            box-shadow: 15px 15px 0px rgba(0,0,0,0.4) !important;
+            z-index: 1000 !important; box-shadow: 15px 15px 0px rgba(0,0,0,0.4) !important;
         }
 
         button {
-            margin-top: 60px; padding: 15px 40px; 
-            background-color: var(--pop-yellow);
-            color: var(--pop-black); 
-            border: 4px solid var(--pop-black); 
-            font-family: 'Bangers', cursive;
-            font-size: 26px; 
-            cursor: pointer; 
-            text-transform: uppercase; 
-            letter-spacing: 2px;
-            transition: 0.1s;
+            margin-top: 60px; padding: 15px 40px; background-color: var(--pop-yellow);
+            color: var(--pop-black); border: 4px solid var(--pop-black); 
+            font-family: 'Bangers', cursive; font-size: 26px; cursor: pointer; 
+            text-transform: uppercase; letter-spacing: 2px; transition: 0.1s;
             box-shadow: 5px 5px 0px var(--pop-black);
         }
-        button:active { 
-            transform: translate(3px, 3px); 
-            box-shadow: 2px 2px 0px var(--pop-black);
-        }
+        button:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0px var(--pop-black); }
         button:disabled { opacity: 0.5; }
     </style>
 </head>
 <body>
-
     <div class="deck" id="deck"></div>
     <button id="actionBtn" onclick="drawCard()">Mischen & Ziehen</button>
 
     <script>
+        // Phrasen mit &shy; (Soft Hyphen) für perfekte Trennung
         const phrases = [
-            "Hörspiel hören", "Checkersendung schauen", "Comic lesen", "Spannendes Buch lesen",
-            "Rätsel lösen", "Quiz spielen", "Lego bauen", "Fantasiegeschichte erfinden",
-            "Zeichnen oder malen", "Basteln mit Recyclingmaterial", "Origami falten", "Modell bauen",
-            "Puzzle lösen", "Kartentrick zeigen", "Geschicklichkeitsspiel spielen", "Jonglieren üben",
+            "Hörspiel hören", "Checker&shy;sendung schauen", "Comic lesen", "Spannendes Buch lesen",
+            "Rätsel lösen", "Quiz spielen", "Lego bauen", "Fantasie&shy;geschichte erfinden",
+            "Zeichnen oder malen", "Basteln mit Recycling&shy;material", "Origami falten", "Modell bauen",
+            "Puzzle lösen", "Karten&shy;trick zeigen", "Geschicklich&shy;keits&shy;spiel", "Jonglieren üben",
             "Musik hören", "Instrument spielen", "Lied vorsingen", "Foto machen",
             "Kurzes Video drehen", "Draussen spielen", "Park oder Wald erkunden", "Tiere beobachten",
             "Pflanzen bestimmen", "Schatzsuche organisieren", "Abfall sammeln", "Müll trennen",
-            "Einer Freundin anrufen", "Beim Nachbarn klingeln", "Kleinen Vortrag halten", "Etwas erklären",
-            "Mini-Interview führen", "Tagebuch schreiben", "Eigene Idee umsetzen", "Kleines Projekt starten"
+            "Freundin anrufen", "Nachbarn klingeln", "Vortrag halten", "Etwas erklären",
+            "Mini-Interview", "Tagebuch schreiben", "Eigene Idee umsetzen", "Projekt starten"
         ];
 
         const suits = ["♥", "♦", "♣", "♠"];
@@ -168,15 +127,12 @@
                 oscillator.frequency.exponentialRampToValueAtTime(440, context.currentTime + 0.2); 
                 gain.gain.setValueAtTime(0.1, context.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.6);
-                oscillator.connect(gain);
-                gain.connect(context.destination);
-                oscillator.start();
-                oscillator.stop(context.currentTime + 0.6);
-            } catch (e) { console.error("Audio-Fehler"); }
+                oscillator.connect(gain); gain.connect(context.destination);
+                oscillator.start(); oscillator.stop(context.currentTime + 0.6);
+            } catch (e) {}
         }
 
         function createDeck() {
-            if (!deck) return;
             deck.innerHTML = '';
             for (let i = 0; i < 8; i++) {
                 const container = document.createElement('div');
