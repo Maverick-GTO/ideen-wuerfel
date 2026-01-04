@@ -3,44 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>D20 Ideen-Würfel</title>
+    <title>D12 Ideen-Würfel</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        body { margin: 0; background: #050505; color: #fff; font-family: 'Georgia', serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-
-        /* --- D20 Geometrie --- */
-        .scene { width: 200px; height: 200px; perspective: 800px; }
+        :root { --glow: #00ffff; --purple: #ff00ff; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        
+        /* Würfel-Szene */
+        .scene { width: 200px; height: 200px; perspective: 1000px; }
         #dice { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(20deg); transition: transform 3s cubic-bezier(0.15, 0, 0.15, 1); }
+        
+        /* 12 Pentagon-Flächen */
+        .face { position: absolute; width: 120px; height: 120px; left: 40px; top: 40px; background: rgba(0, 255, 255, 0.1); border: 2px solid var(--glow); box-shadow: 0 0 15px var(--glow); display: flex; align-items: center; justify-content: center; backface-visibility: visible; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
+        .face::before { content: "D12"; font-size: 10px; color: rgba(0, 255, 255, 0.3); }
 
-        .face { 
-            position: absolute; width: 0; height: 0; 
-            border-left: 50px solid transparent; 
-            border-right: 50px solid transparent; 
-            border-bottom: 86.6px solid rgba(0, 180, 255, 0.5); 
-            transform-origin: 50% 100%; 
-            backface-visibility: visible; 
-            filter: drop-shadow(0 0 8px #00ffff);
-        }
-
-        /* --- Ergebnis-Overlay (BG3 Style) --- */
-        #overlay { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); 
-            background: rgba(10, 10, 15, 0.95); border: 2px solid #00ffff; padding: 25px; 
-            border-radius: 10px; text-align: center; width: 80%; opacity: 0; 
-            transition: all 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.28); z-index: 1000; pointer-events: none;
-            box-shadow: 0 0 30px #00ffff;
-        }
+        /* Ergebnis-Fenster (waagrecht & lesbar) */
+        #overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: rgba(0, 0, 0, 0.95); border: 3px solid var(--purple); box-shadow: 0 0 40px var(--purple); padding: 30px; border-radius: 20px; text-align: center; width: 80%; opacity: 0; transition: all 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.28); z-index: 100; pointer-events: none; }
         #overlay.active { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
-        #overlay h2 { color: #00ffff; font-size: 14px; margin: 0 0 10px 0; letter-spacing: 2px; }
-        #result-text { font-size: 22px; font-weight: bold; line-height: 1.4; }
+        #result-text { font-size: 26px; font-weight: bold; text-shadow: 0 0 10px var(--purple); line-height: 1.4; }
 
-        button { 
-            margin-top: 50px; padding: 12px 40px; font-size: 18px; 
-            background: transparent; color: #00ffff; border: 2px solid #00ffff; 
-            cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
-            transition: 0.3s;
-        }
-        button:active { background: #00ffff; color: #000; }
+        button { margin-top: 60px; padding: 15px 50px; font-size: 24px; background: transparent; color: var(--glow); border: 2px solid var(--glow); border-radius: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; transition: 0.3s; }
+        button:active { background: var(--glow); color: #000; }
     </style>
 </head>
 <body>
@@ -50,54 +33,47 @@
     </div>
 
     <div id="overlay" onclick="this.classList.remove('active')">
-        <h2>DEINE IDEE</h2>
+        <div style="color: var(--purple); font-size: 12px; margin-bottom: 10px; letter-spacing: 3px;">ERGEBNIS</div>
         <div id="result-text"></div>
-        <p style="font-size: 10px; color: #555; margin-top: 15px;">ZUM SCHLIESSEN TIPPEN</p>
+        <div style="margin-top: 25px; font-size: 10px; color: #555;">TIPPEN ZUM SCHLIESSEN</div>
     </div>
 
-    <button onclick="roll()">Würfeln</button>
+    <button onclick="roll()">GO</button>
 
     <script>
         const phrases = [
-            "Hörspiel hören", "Sendung schauen", "Buch/Comic lesen", "Bild malen",
-            "Geschichte schreiben", "Thema recherchieren", "Brettspiel spielen", "Rätsel lösen",
-            "Kreidezeichnung", "Puzzle lösen", "Instrument üben", "Experiment machen",
-            "Meinung aufschreiben", "Spaziergang", "Lied mitsingen", "Origami falten",
-            "Tagebuch schreiben", "Snack zubereiten", "Lern-Quiz", "Aufräumen"
+            "Hörspiel hören", "Sendung schauen", "Buch lesen", "Bild malen",
+            "Geschichte schreiben", "Thema recherchieren", "Instrument üben",
+            "Experiment machen", "Meinung schreiben", "Tagebuch schreiben",
+            "Lern-Quiz", "Zimmer Aufräumen"
         ];
 
         const dice = document.getElementById('dice');
         const overlay = document.getElementById('overlay');
         const resultText = document.getElementById('result-text');
 
-        // Die 20 Flächen eines Ikosaeders (D20) mathematisch anordnen
-        for (let i = 0; i < 20; i++) {
+        // Mathematische Positionen für 12 Flächen (Dodekaeder-Struktur)
+        const angles = [
+            [90, 0], [-90, 0], [26.57, 0], [26.57, 72], [26.57, 144], [26.57, 216], [26.57, 288],
+            [-26.57, 36], [-26.57, 108], [-26.57, 180], [-26.57, 252], [-26.57, 324]
+        ];
+
+        for (let i = 0; i < 12; i++) {
             const face = document.createElement('div');
             face.className = 'face';
-            
-            // Winkeleinteilung für 20 Flächen (5 oben, 10 mitte, 5 unten)
-            let rx, ry;
-            if (i < 5) { rx = 30; ry = i * 72; }
-            else if (i < 15) { rx = 90; ry = (i - 5) * 36 + 18; }
-            else { rx = 150; ry = (i - 15) * 72; }
-            
-            face.style.transform = `rotateY(${ry}deg) rotateX(${rx}deg) translateZ(75px)`;
+            face.style.transform = `rotateY(${angles[i][1]}deg) rotateX(${angles[i][0]}deg) translateZ(80px)`;
             dice.appendChild(face);
         }
 
         function roll() {
             overlay.classList.remove('active');
-            
-            // Massive Zufallsrotation
             const rx = Math.floor(Math.random() * 2000) + 1000;
             const ry = Math.floor(Math.random() * 2000) + 1000;
-            const rz = Math.floor(Math.random() * 1000);
-            
-            dice.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`;
+            dice.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
 
-            // Ergebnis-Einblendung
             setTimeout(() => {
-                resultText.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+                const randomIdx = Math.floor(Math.random() * phrases.length);
+                resultText.innerText = phrases[randomIdx];
                 overlay.classList.add('active');
             }, 3100);
         }
