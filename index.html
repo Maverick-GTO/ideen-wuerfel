@@ -65,4 +65,158 @@
             background: linear-gradient(135deg, #8b0000, #4b0000);
             z-index: 2;
             border: 6px solid #fff;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
+        }
+
+        /* Vorderseite */
+        .card-front {
+            color: #000;
+            transform: rotateY(180deg);
+            z-index: 1;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        /* Poker-Symbole an den Ecken */
+        .suit { position: absolute; font-size: 28px; }
+        .top-left { top: 10px; left: 10px; }
+        .bottom-right { bottom: 10px; right: 10px; transform: rotate(180deg); }
+
+        /* Animation beim Mischen */
+        .shuffle {
+            animation: shuffle-move 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shuffle-move {
+            0%, 100% { transform: translateX(0) translateZ(0); }
+            50% { transform: translateX(130px) rotate(8deg) translateZ(50px); }
+        }
+
+        /* Gezogene Karte */
+        .drawn {
+            transform: scale(1.3) translateY(-40px) rotateY(180deg) !important;
+            z-index: 1000 !important;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.7);
+            border: 2px solid var(--gold) !important;
+        }
+
+        /* Button */
+        button {
+            margin-top: 50px;
+            padding: 18px 45px;
+            background: var(--gold);
+            color: #000;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #8b6b00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.1s;
+        }
+
+        button:active { transform: translateY(3px); box-shadow: 0 2px 0 #8b6b00; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="deck" id="deck"></div>
+
+    <button id="actionBtn" onclick="drawCard()">Mischen & Ziehen</button>
+
+    <script>
+        const phrases = [
+            "Hörspiel hören", "Checkersendung schauen", "Comic lesen", "Spannendes Buch lesen",
+            "Rätsel lösen", "Quiz spielen", "Lego bauen", "Fantasiegeschichte erfinden",
+            "Zeichnen oder malen", "Basteln mit Recyclingmaterial", "Origami falten", "Modell bauen",
+            "Puzzle lösen", "Kartentrick zeigen", "Geschicklichkeitsspiel spielen", "Jonglieren üben",
+            "Musik hören", "Instrument spielen", "Lied vorsingen", "Foto machen",
+            "Kurzes Video drehen", "Draussen spielen", "Park oder Wald erkunden", "Tiere beobachten",
+            "Pflanzen bestimmen", "Schatzsuche organisieren", "Abfall sammeln", "Müll trennen",
+            "Einer Freundin anrufen", "Beim Nachbarn klingeln", "Kleinen Vortrag halten", "Etwas erklären",
+            "Mini-Interview führen", "Tagebuch schreiben", "Eigene Idee umsetzen", "Kleines Projekt starten"
+        ];
+
+        const suits = [
+            { s: "♠", c: "var(--poker-black)" }, { s: "♥", c: "var(--poker-red)" }, 
+            { s: "♣", c: "var(--poker-black)" }, { s: "♦", c: "var(--poker-red)" }
+        ];
+
+        const deck = document.getElementById('deck');
+        const btn = document.getElementById('actionBtn');
+        let cardElements = [];
+
+        function createDeck() {
+            deck.innerHTML = '';
+            cardElements = [];
+            // Wir erstellen optisch 10 Karten im Stapel
+            for (let i = 0; i < 10; i++) {
+                const container = document.createElement('div');
+                container.className = 'card-container';
+                container.style.transform = `translateZ(${-i * 3}px)`;
+                
+                const back = document.createElement('div');
+                back.className = 'card card-back';
+                
+                const front = document.createElement('div');
+                front.className = 'card card-front';
+                
+                container.appendChild(back);
+                container.appendChild(front);
+                deck.appendChild(container);
+                cardElements.push(container);
+            }
+        }
+
+        function drawCard() {
+            btn.disabled = true;
+            
+            // Sound-Logik für 3 Dateien
+            const soundNum = Math.floor(Math.random() * 3) + 1;
+            const audio = new Audio(`shuffle${soundNum}.mp3`);
+            audio.play().catch(() => console.log("Sound-Dateien fehlen im Repository."));
+
+            createDeck();
+
+            // Mischen starten
+            cardElements.forEach((c, idx) => {
+                setTimeout(() => c.classList.add('shuffle'), idx * 30);
+            });
+
+            setTimeout(() => {
+                // Mischen stoppen
+                cardElements.forEach(c => c.classList.remove('shuffle'));
+
+                // Zufällige Karte aus dem Stapel wählen
+                const selected = cardElements[Math.floor(Math.random() * cardElements.length)];
+                
+                // Zufälligen Spruch und Poker-Farbe wählen
+                const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+                const randomSuit = suits[Math.floor(Math.random() * 4)];
+
+                const front = selected.querySelector('.card-front');
+                front.style.color = randomSuit.c;
+                front.innerHTML = `
+                    <div class="suit top-left">${randomSuit.s}</div>
+                    <div style="padding: 0 10px;">${randomPhrase}</div>
+                    <div class="suit bottom-right">${randomSuit.s}</div>
+                `;
+
+                selected.classList.add('drawn');
+                btn.disabled = false;
+            }, 1200); // Dauer der Animation
+        }
+
+        // Initialisierung
+        createDeck();
+
+        // Service Worker für Offline-Funktion
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
