@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#040426">
     <title>Magische Karten</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
@@ -18,16 +19,22 @@
         body {
             margin: 0;
             background-color: var(--bg-dark-blue);
-            /* Punkte verkleinert: Radius von 7.5 auf 5.5 */
+            /* Kleine Punkte im Hintergrund */
             background-image: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="15" r="5.5" fill="%234da6ff"/><circle cx="45" cy="15" r="5.5" fill="%23ffffff"/><circle cx="15" cy="45" r="5.5" fill="%23ff66b3"/><circle cx="45" cy="45" r="5.5" fill="%239933ff"/></svg>');
             background-size: 60px 60px;
             color: var(--pop-black);
-            font-family: 'Arial Black', 'Impact', sans-serif;
+            font-family: 'Bangers', cursive; /* Einheitliche Comic-Schrift */
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             height: 100vh; overflow: hidden;
         }
 
-        .deck { position: relative; width: 240px; height: 340px; perspective: 1200px; }
+        /* Karten-Stapel etwas grösser gemacht */
+        .deck { 
+            position: relative; 
+            width: 270px; 
+            height: 380px; 
+            perspective: 1200px; 
+        }
 
         .card-container {
             position: absolute; width: 100%; height: 100%;
@@ -49,28 +56,36 @@
         }
         
         .card-back::after {
-            content: '★'; font-size: 80px; color: var(--pop-yellow);
-            -webkit-text-stroke: 3px var(--pop-black); text-shadow: 3px 3px 0 var(--pop-black);
+            content: '★'; font-size: 90px; color: var(--pop-yellow);
+            -webkit-text-stroke: 3px var(--pop-black); text-shadow: 4px 4px 0 var(--pop-black);
         }
 
         .card-front {
-            background-image: radial-gradient(rgba(230, 0, 0, 0.15) 15%, transparent 16%);
-            background-size: 10px 10px; color: #fff; transform: rotateY(180deg); 
-            z-index: 1; font-size: 24px; line-height: 1.1; text-transform: uppercase;
-            -webkit-text-stroke: 1.8px var(--pop-black); text-shadow: 3px 3px 0 var(--pop-black);
+            background-image: radial-gradient(rgba(230, 0, 0, 0.1) 15%, transparent 16%);
+            background-size: 10px 10px; 
+            color: var(--pop-black); /* Massive schwarze Schrift wie im Button */
+            transform: rotateY(180deg); 
+            z-index: 1; 
+            font-size: 34px; /* Grössere Schrift für bessere Lesbarkeit */
+            line-height: 1.1; 
+            text-transform: uppercase;
             
-            /* Optimierte Silbentrennung */
+            /* Keine doppelte Schrift/Umrandung mehr */
+            -webkit-text-stroke: 0;
+            text-shadow: none;
+
+            /* Silbentrennung */
             hyphens: auto; -webkit-hyphens: auto; -ms-hyphens: auto;
             word-break: break-word; overflow-wrap: break-word;
         }
 
         .text-content {
-            max-width: 100%; padding: 0 2px;
-            display: flex; align-items: center; justify-content: center; min-height: 160px;
+            max-width: 100%; padding: 0 5px;
+            display: flex; align-items: center; justify-content: center; min-height: 180px;
         }
 
         .suit { 
-            position: absolute; font-size: 40px; color: var(--pop-red);
+            position: absolute; font-size: 45px; color: var(--pop-red);
             -webkit-text-stroke: 2px var(--pop-black); text-shadow: 2px 2px 0 var(--pop-black);
         }
         .top-left { top: 15px; left: 15px; }
@@ -80,18 +95,18 @@
         @keyframes shuffle-move { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(110px) rotate(8deg); } }
 
         .drawn {
-            transform: scale(1.1) translateY(-30px) rotateY(180deg) !important;
-            z-index: 1000 !important; box-shadow: 15px 15px 0px rgba(0,0,0,0.4) !important;
+            transform: scale(1.1) translateY(-20px) rotateY(180deg) !important;
+            z-index: 1000 !important; box-shadow: 15px 15px 0px rgba(0,0,0,0.5) !important;
         }
 
         button {
-            margin-top: 60px; padding: 15px 40px; background-color: var(--pop-yellow);
+            margin-top: 50px; padding: 15px 45px; background-color: var(--pop-yellow);
             color: var(--pop-black); border: 4px solid var(--pop-black); 
-            font-family: 'Bangers', cursive; font-size: 26px; cursor: pointer; 
+            font-family: 'Bangers', cursive; font-size: 28px; cursor: pointer; 
             text-transform: uppercase; letter-spacing: 2px; transition: 0.1s;
-            box-shadow: 5px 5px 0px var(--pop-black);
+            box-shadow: 6px 6px 0px var(--pop-black);
         }
-        button:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0px var(--pop-black); }
+        button:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0px var(--pop-black); }
         button:disabled { opacity: 0.5; }
     </style>
 </head>
@@ -100,7 +115,6 @@
     <button id="actionBtn" onclick="drawCard()">Mischen & Ziehen</button>
 
     <script>
-        // Phrasen mit &shy; (Soft Hyphen) für perfekte Trennung
         const phrases = [
             "Hörspiel hören", "Checker&shy;sendung schauen", "Comic lesen", "Spannendes Buch lesen",
             "Rätsel lösen", "Quiz spielen", "Lego bauen", "Fantasie&shy;geschichte erfinden",
