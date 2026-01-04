@@ -12,26 +12,30 @@
             --pop-yellow: #ffd700;
             --pop-blue: #0000ff;
             --pop-black: #000000;
-            --pop-bg: #f0f0f0;
+            /* Neue Hintergrundfarben */
+            --bg-dark-blue: #0a0a45;
+            --dot-light-blue: #4da6ff;
+            --dot-white: #ffffff;
+            --dot-pink: #ff66b3;
+            --dot-purple: #9933ff;
         }
 
         body {
             margin: 0;
-            /* Pop-Art Hintergrund mit Rasterpunkten */
-            background-color: var(--pop-bg);
-            background-image: radial-gradient(var(--pop-black) 10%, transparent 11%),
-                              radial-gradient(var(--pop-black) 10%, transparent 11%);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
+            /* Dunkelblauer Hintergrund */
+            background-color: var(--bg-dark-blue);
+            /* Buntes, grosses Rastermuster mittels SVG */
+            background-image: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="15" r="9" fill="%234da6ff"/><circle cx="45" cy="15" r="9" fill="%23ffffff"/><circle cx="15" cy="45" r="9" fill="%23ff66b3"/><circle cx="45" cy="45" r="9" fill="%239933ff"/></svg>');
+            background-size: 60px 60px; /* Grösse des Musters */
             color: var(--pop-black);
-            font-family: 'Bangers', cursive; /* Comic-Schrift */
+            font-family: 'Arial Black', 'Impact', sans-serif; /* Besser lesbare Comic-Schrift */
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             height: 100vh; overflow: hidden;
         }
 
         .deck { 
             position: relative; 
-            width: 240px; /* Etwas breiter für den dicken Rand */
+            width: 240px; 
             height: 340px; 
             perspective: 1200px; 
         }
@@ -47,23 +51,20 @@
             backface-visibility: hidden; display: flex; flex-direction: column;
             align-items: center; justify-content: center; padding: 20px;
             text-align: center; box-sizing: border-box; 
-            /* Dicker Comic-Rand */
             border: 5px solid var(--pop-black);
-            box-shadow: 5px 5px 0px var(--pop-black);
+            box-shadow: 7px 7px 0px var(--pop-black);
+            background-color: #fff;
         }
 
-        /* Rückseite: Pop-Art Muster */
+        /* Rückseite: Klassisches blaues Raster */
         .card-back {
             background-color: var(--pop-blue);
             background-image: 
-                linear-gradient(45deg, var(--pop-black) 25%, transparent 25%, transparent 75%, var(--pop-black) 75%, var(--pop-black)), 
-                linear-gradient(45deg, var(--pop-black) 25%, transparent 25%, transparent 75%, var(--pop-black) 75%, var(--pop-black));
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
+                radial-gradient(var(--pop-black) 20%, transparent 21%);
+            background-size: 15px 15px;
             z-index: 2;
         }
         
-        /* Stern auf der Rückseite im Comic-Stil */
         .card-back::after {
             content: '★';
             font-size: 80px;
@@ -72,32 +73,29 @@
             text-shadow: 3px 3px 0 var(--pop-black);
         }
 
-        /* Vorderseite: Lichtenstein-Stil */
+        /* Vorderseite: Bessere Lesbarkeit */
         .card-front {
-            background-color: #ffffff;
-            /* Rote Rasterpunkte (Benday Dots) */
-            background-image: radial-gradient(var(--pop-red) 15%, transparent 16%);
+            /* Rote Rasterpunkte etwas dezenter für besseren Kontrast */
+            background-image: radial-gradient(rgba(230, 0, 0, 0.3) 15%, transparent 16%);
             background-size: 10px 10px;
-            color: var(--pop-black); 
+            color: #fff; /* Weisse Schrift innen */
             transform: rotateY(180deg); 
             z-index: 1;
-            font-size: 32px; /* Grosse Comic-Schrift */
-            line-height: 1.1;
-            letter-spacing: 1px;
+            font-size: 28px; /* Etwas kleiner für mehr Platz */
+            line-height: 1.2;
             text-transform: uppercase;
-            /* Text-Schatten für Pop-Art-Effekt */
-            text-shadow: 2px 2px 0 #fff, 4px 4px 0 var(--pop-black);
+            /* Dicker schwarzer Rand um die Schrift für Comic-Look & Lesbarkeit */
+            -webkit-text-stroke: 2px var(--pop-black);
+            text-shadow: 3px 3px 0 var(--pop-black);
         }
 
-        /* Text-Container für Umbruch */
         .text-content {
             word-wrap: break-word;
             overflow-wrap: break-word;
-            max-width: 90%; /* Verhindert Überlappen */
-            padding: 0 10px;
+            max-width: 95%;
+            padding: 0 5px;
         }
 
-        /* Symbole im Comic-Stil */
         .suit { 
             position: absolute; 
             font-size: 40px; 
@@ -117,7 +115,6 @@
         .drawn {
             transform: scale(1.1) translateY(-30px) rotateY(180deg) !important;
             z-index: 1000 !important; 
-            /* Kein Neon mehr, dafür grösserer Schatten */
             box-shadow: 15px 15px 0px rgba(0,0,0,0.3) !important;
         }
 
@@ -126,6 +123,7 @@
             background-color: var(--pop-yellow);
             color: var(--pop-black); 
             border: 4px solid var(--pop-black); 
+            /* Button behält die 'Bangers' Schrift */
             font-family: 'Bangers', cursive;
             font-size: 26px; 
             cursor: pointer; 
@@ -165,7 +163,6 @@
         const btn = document.getElementById('actionBtn');
 
         function playMagicSound() {
-            // ... (Sound-Code bleibt gleich) ...
             try {
                 const context = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = context.createOscillator();
@@ -209,10 +206,6 @@
                 const randomSuit = suits[Math.floor(Math.random() * suits.length)];
                 const front = selected.querySelector('.card-front');
                 
-                // Farbe je nach Symbol anpassen (optional, hier alle rot für Pop-Art)
-                // front.style.color = (randomSuit === "♥" || randomSuit === "♦") ? "var(--pop-red)" : "var(--pop-black)";
-                
-                // Text in Container für Umbruch
                 front.innerHTML = `
                     <div class="suit top-left">${randomSuit}</div>
                     <div class="text-content">${randomPhrase}</div>
@@ -223,9 +216,7 @@
             }, 1500);
         }
 
-        // Initialisierung
         window.onload = () => {
-            console.log("Pop-Art App geladen");
             createDeck();
         };
     </script>
