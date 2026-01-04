@@ -1,10 +1,10 @@
 {
-  "name": "Ideen-Würfel",
+  "name": "Poker-Ideen",
   "short_name": "Ideen",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#0a4d26",
+  "theme_color": "#d4af37",
   "icons": [
     {
       "src": "icon.png",
