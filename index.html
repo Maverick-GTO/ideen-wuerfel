@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ideen-Würfel</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .scene { width: 250px; height: 250px; perspective: 1000px; transition: transform 1s; }
+        #dice { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: translateZ(-100px); transition: transform 2s cubic-bezier(0.15, 0, 0.15, 1); }
+        .face { position: absolute; width: 0; height: 0; border-left: 60px solid transparent; border-right: 60px solid transparent; border-bottom: 105px solid rgba(0, 255, 255, 0.8); border-top: 0; transform-origin: 50% 100%; display: flex; align-items: center; justify-content: center; backface-visibility: visible; box-shadow: 0 0 5px #00ffff; }
+        .face span { position: absolute; top: 40px; width: 100px; left: -50px; text-align: center; font-size: 10px; color: #000; font-weight: bold; pointer-events: none; }
+        button { margin-top: 50px; padding: 20px 40px; font-size: 24px; background: #ff00ff; color: white; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 0 15px #ff00ff; z-index: 10; }
+        .zoom { transform: scale(1.8) translateZ(150px) !important; }
+    </style>
+</head>
+<body>
+    <div class="scene" id="scene">
+        <div id="dice"></div>
+    </div>
+    <button onclick="roll()">GO</button>
+
+    <script>
+        const phrases = [
+            "Hörspiel hören", "Sendung schauen", "Buch/Comic lesen", "Bild malen",
+            "Geschichte schreiben", "Thema recherchieren", "Brettspiel spielen", "Rätsel lösen",
+            "Kreidezeichnung", "Puzzle lösen", "Instrument üben", "Experiment machen",
+            "Meinung schreiben", "Spaziergang", "Lied mitsingen", "Origami falten",
+            "Tagebuch schreiben", "Snack zubereiten", "Lern-Quiz", "Aufräumen"
+        ];
+
+        const dice = document.getElementById('dice');
+        // Vereinfachte 3D-Platzierung für 20 Flächen
+        for (let i = 0; i < 20; i++) {
+            const face = document.createElement('div');
+            face.className = 'face';
+            face.innerHTML = `<span>${phrases[i]}</span>`;
+            // Mathematische Verteilung der Flächen (vereinfacht für CSS 3D)
+            const phi = Math.acos(-1 + (2 * i) / 20);
+            const theta = Math.sqrt(20 * Math.PI) * phi;
+            face.style.transform = `rotateY(${theta}rad) rotateX(${phi}rad) translateZ(120px)`;
+            dice.appendChild(face);
+        }
+
+        function roll() {
+            document.getElementById('scene').classList.remove('zoom');
+            const randX = Math.floor(Math.random() * 2000) + 1000;
+            const randY = Math.floor(Math.random() * 2000) + 1000;
+            dice.style.transform = `translateZ(-100px) rotateX(${randX}deg) rotateY(${randY}deg)`;
+            
+            setTimeout(() => {
+                document.getElementById('scene').classList.add('zoom');
+            }, 2100);
+        }
+
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+    </script>
+</body>
+</html>
