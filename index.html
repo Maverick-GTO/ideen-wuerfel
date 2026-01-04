@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Magische Karten</title>
+    <title>Poker Ideen-Karten</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
-
         :root {
-            --gold: #ffd700;
-            --magic-blue: #00d2ff;
-            --bg: #050510;
+            --poker-red: #e0115f;
+            --poker-black: #1a1a1a;
+            --gold: #d4af37;
         }
 
         body {
             margin: 0;
-            background: radial-gradient(circle, #1a1a2e 0%, var(--bg) 100%);
+            background: radial-gradient(circle, #0a4d26 0%, #052613 100%); /* Klassisches Poker-Grün */
             color: #fff;
-            font-family: 'Cinzel', serif;
+            font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -27,11 +25,10 @@
             overflow: hidden;
         }
 
-        /* Karten-Stapel-Container */
         .deck {
             position: relative;
-            width: 220px;
-            height: 320px;
+            width: 200px;
+            height: 280px;
             perspective: 1000px;
         }
 
@@ -47,77 +44,75 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            border-radius: 15px;
+            border-radius: 12px;
             backface-visibility: hidden;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 25px;
+            padding: 15px;
             text-align: center;
             box-sizing: border-box;
-            border: 2px solid var(--gold);
+            background: #fff;
+            border: 2px solid #ccc;
         }
 
         /* Karten-Rückseite */
         .card-back {
-            background: linear-gradient(135deg, #1a1a2e, #050510);
+            background: linear-gradient(135deg, #8b0000, #4b0000);
             z-index: 2;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .card-back::after {
-            content: "✧";
-            font-size: 60px;
-            color: var(--gold);
-            text-shadow: 0 0 15px var(--gold);
+            border: 5px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);
         }
 
         /* Karten-Vorderseite */
         .card-front {
-            background: linear-gradient(145deg, #1a1a2e, #2a2a4e);
-            color: var(--gold);
-            font-size: 22px;
-            text-shadow: 0 0 10px #000;
+            color: #000;
             transform: rotateY(180deg);
             z-index: 1;
+            font-weight: bold;
+            font-size: 18px;
+            justify-content: space-around;
         }
 
-        /* Animationen */
+        .suit {
+            position: absolute;
+            font-size: 24px;
+        }
+        .top-left { top: 5px; left: 10px; }
+        .bottom-right { bottom: 5px; right: 10px; transform: rotate(180deg); }
+
         .shuffle {
-            animation: shuffle-anim 0.6s ease-in-out infinite;
+            animation: shuffle-anim 0.5s ease-in-out infinite;
         }
 
         @keyframes shuffle-anim {
-            0%, 100% { transform: translateX(0) rotate(0); }
-            50% { transform: translateX(120px) rotate(10deg); }
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(100px) rotate(5deg); }
         }
 
-        /* Wenn die Karte gezogen wird */
         .drawn {
-            transform: scale(1.3) translateY(-60px) rotateY(180deg) !important;
+            transform: scale(1.4) translateY(-30px) rotateY(180deg) !important;
             z-index: 1000 !important;
-            box-shadow: 0 0 50px var(--magic-blue);
-            border-color: var(--magic-blue) !important;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
         }
 
         button {
             margin-top: 60px;
             padding: 15px 40px;
-            font-family: 'Cinzel', serif;
-            background: transparent;
-            color: var(--gold);
-            border: 2px solid var(--gold);
+            background: #d4af37;
+            color: #000;
+            border: 2px solid #fff;
+            border-radius: 5px;
             font-size: 20px;
+            font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-            z-index: 100;
+            box-shadow: 0 4px 0 #8b6b00;
             text-transform: uppercase;
-            letter-spacing: 2px;
         }
 
-        button:active { transform: scale(0.9); background: var(--gold); color: #000; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button:active { transform: translateY(2px); box-shadow: 0 2px 0 #8b6b00; }
     </style>
 </head>
 <body>
@@ -128,19 +123,29 @@
 
     <script>
         const phrases = [
-            "Hörspiel hören", "Sendung schauen", "Buch lesen", "Bild malen",
-            "Geschichte schreiben", "Thema recherchieren", "Instrument üben",
-            "Experiment machen", "Meinung schreiben", "Tagebuch schreiben",
-            "Lern-Quiz", "Zimmer aufräumen"
+            "Hörspiel hören", "Checkersendung schauen", "Comic lesen", "Spannendes Buch lesen",
+            "Rätsel lösen", "Quiz spielen", "Lego bauen", "Fantasiegeschichte erfinden",
+            "Zeichnen oder malen", "Basteln mit Recyclingmaterial", "Origami falten", "Modell bauen",
+            "Puzzle lösen", "Kartentrick zeigen", "Geschicklichkeitsspiel spielen", "Jonglieren üben",
+            "Musik hören", "Instrument spielen", "Lied vorsingen", "Foto machen",
+            "Kurzes Video drehen", "Draussen spielen", "Park oder Wald erkunden", "Tiere beobachten",
+            "Pflanzen bestimmen", "Schatzsuche organisieren", "Abfall in Nachbarschaft sammeln", "Müll trennen",
+            "Einer Freundin anrufen", "Beim Nachbarn klingeln", "Kleinen Vortrag halten", "Etwas erklären",
+            "Mini-Interview führen", "Tagebuch schreiben", "Eigene Idee umsetzen", "Kleines Projekt starten"
+        ];
+
+        const suits = [
+            { s: "♠", c: "black" }, { s: "♥", c: "red" }, 
+            { s: "♣", c: "black" }, { s: "♦", c: "red" }
         ];
 
         const deck = document.getElementById('deck');
-        const btn = document.getElementById('actionBtn');
         let cardElements = [];
 
         function createDeck() {
             deck.innerHTML = '';
             cardElements = [];
+            // Wir zeigen nur 12 Karten im Stapel an (optisch), ziehen aber aus 36
             for (let i = 0; i < 12; i++) {
                 const container = document.createElement('div');
                 container.className = 'card-container';
@@ -151,8 +156,7 @@
                 
                 const front = document.createElement('div');
                 front.className = 'card card-front';
-                front.innerText = ""; // Text wird erst beim Ziehen gesetzt
-
+                
                 container.appendChild(back);
                 container.appendChild(front);
                 deck.appendChild(container);
@@ -161,30 +165,34 @@
         }
 
         function drawCard() {
-            btn.disabled = true;
+            // Sound zufällig auswählen
+            const soundNum = Math.floor(Math.random() * 5) + 1;
+            const audio = new Audio(`shuffle${soundNum}.mp3`);
+            audio.play().catch(() => console.log("Sound-Dateien fehlen noch im Ordner."));
+
             createDeck();
-            
-            // Mischen-Animation starten
             cardElements.forEach((c, idx) => {
-                setTimeout(() => c.classList.add('shuffle'), idx * 30);
+                setTimeout(() => c.classList.add('shuffle'), idx * 20);
             });
 
             setTimeout(() => {
-                // Mischen stoppen
                 cardElements.forEach(c => c.classList.remove('shuffle'));
-
-                // Zufällige Karte auswählen
-                const randomIdx = Math.floor(Math.random() * 12);
+                const randomIdx = Math.floor(Math.random() * cardElements.length);
                 const selected = cardElements[randomIdx];
                 
-                // Text auf die Vorderseite schreiben
                 const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-                selected.querySelector('.card-front').innerText = randomPhrase;
+                const randomSuit = suits[Math.floor(Math.random() * 4)];
 
-                // Karte nach vorne bringen und umdrehen
+                const front = selected.querySelector('.card-front');
+                front.style.color = randomSuit.c === "red" ? "var(--poker-red)" : "var(--poker-black)";
+                front.innerHTML = `
+                    <div class="suit top-left">${randomSuit.s}</div>
+                    <div>${randomPhrase}</div>
+                    <div class="suit bottom-right">${randomSuit.s}</div>
+                `;
+
                 selected.classList.add('drawn');
-                btn.disabled = false;
-            }, 1200);
+            }, 1000);
         }
 
         createDeck();
