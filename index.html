@@ -3,34 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Magische Karten</title>
+    <title>Magische Karten (Pop-Art)</title>
     <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
-
         :root {
-            --poker-red: #af0000;
-            --poker-black: #1a1a1a;
-            --gold: #c5a059;
+            --pop-red: #e60000;
+            --pop-yellow: #ffd700;
+            --pop-blue: #0000ff;
+            --pop-black: #000000;
+            --pop-bg: #f0f0f0;
         }
 
         body {
             margin: 0;
-            background: radial-gradient(circle, #1a1a2e 0%, #050510 100%);
-            color: #fff;
-            font-family: 'Cinzel', serif;
+            /* Pop-Art Hintergrund mit Rasterpunkten */
+            background-color: var(--pop-bg);
+            background-image: radial-gradient(var(--pop-black) 10%, transparent 11%),
+                              radial-gradient(var(--pop-black) 10%, transparent 11%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            color: var(--pop-black);
+            font-family: 'Bangers', cursive; /* Comic-Schrift */
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             height: 100vh; overflow: hidden;
         }
 
-        /* Der Stapel-Bereich */
         .deck { 
             position: relative; 
-            width: 220px; 
-            height: 320px; 
+            width: 240px; /* Etwas breiter für den dicken Rand */
+            height: 340px; 
             perspective: 1200px; 
-            background: rgba(255,255,255,0.03); /* Minimal sichtbar zur Fehlersuche */
-            border-radius: 12px;
         }
 
         .card-container {
@@ -39,29 +42,71 @@
         }
 
         .card {
-            position: absolute; width: 100%; height: 100%; border-radius: 12px;
+            position: absolute; width: 100%; height: 100%; 
+            border-radius: 15px;
             backface-visibility: hidden; display: flex; flex-direction: column;
             align-items: center; justify-content: center; padding: 20px;
-            text-align: center; box-sizing: border-box; border: 2px solid var(--gold);
+            text-align: center; box-sizing: border-box; 
+            /* Dicker Comic-Rand */
+            border: 5px solid var(--pop-black);
+            box-shadow: 5px 5px 0px var(--pop-black);
         }
 
+        /* Rückseite: Pop-Art Muster */
         .card-back {
-            background: linear-gradient(135deg, #1a1a2e, #050510); z-index: 2;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 5 L95 50 L50 95 L5 50 Z" fill="none" stroke="%23c5a059" stroke-width="2"/></svg>');
-            background-size: 60px 60px;
+            background-color: var(--pop-blue);
+            background-image: 
+                linear-gradient(45deg, var(--pop-black) 25%, transparent 25%, transparent 75%, var(--pop-black) 75%, var(--pop-black)), 
+                linear-gradient(45deg, var(--pop-black) 25%, transparent 25%, transparent 75%, var(--pop-black) 75%, var(--pop-black));
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            z-index: 2;
+        }
+        
+        /* Stern auf der Rückseite im Comic-Stil */
+        .card-back::after {
+            content: '★';
+            font-size: 80px;
+            color: var(--pop-yellow);
+            -webkit-text-stroke: 3px var(--pop-black);
+            text-shadow: 3px 3px 0 var(--pop-black);
         }
 
+        /* Vorderseite: Lichtenstein-Stil */
         .card-front {
-            background: #e8d5b5; color: #000; transform: rotateY(180deg); z-index: 1;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.2);
-            font-size: 26px;
-            line-height: 1.2;
+            background-color: #ffffff;
+            /* Rote Rasterpunkte (Benday Dots) */
+            background-image: radial-gradient(var(--pop-red) 15%, transparent 16%);
+            background-size: 10px 10px;
+            color: var(--pop-black); 
+            transform: rotateY(180deg); 
+            z-index: 1;
+            font-size: 32px; /* Grosse Comic-Schrift */
+            line-height: 1.1;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            /* Text-Schatten für Pop-Art-Effekt */
+            text-shadow: 2px 2px 0 #fff, 4px 4px 0 var(--pop-black);
         }
 
-        .suit { position: absolute; font-size: 35px; opacity: 0.9; }
-        .top-left { top: 10px; left: 10px; }
-        .bottom-right { bottom: 10px; right: 10px; transform: rotate(180deg); }
+        /* Text-Container für Umbruch */
+        .text-content {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 90%; /* Verhindert Überlappen */
+            padding: 0 10px;
+        }
+
+        /* Symbole im Comic-Stil */
+        .suit { 
+            position: absolute; 
+            font-size: 40px; 
+            color: var(--pop-red);
+            -webkit-text-stroke: 2px var(--pop-black);
+            text-shadow: 2px 2px 0 var(--pop-black);
+        }
+        .top-left { top: 15px; left: 15px; }
+        .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
 
         .shuffle { animation: shuffle-move 0.4s ease-in-out infinite; }
         @keyframes shuffle-move { 
@@ -70,19 +115,30 @@
         }
 
         .drawn {
-            transform: scale(1.35) translateY(-30px) rotateY(180deg) !important;
-            z-index: 1000 !important; box-shadow: 0 0 50px rgba(0, 210, 255, 0.6);
-            border: 3px solid #00d2ff !important;
+            transform: scale(1.1) translateY(-30px) rotateY(180deg) !important;
+            z-index: 1000 !important; 
+            /* Kein Neon mehr, dafür grösserer Schatten */
+            box-shadow: 15px 15px 0px rgba(0,0,0,0.3) !important;
         }
 
         button {
-            margin-top: 60px; padding: 15px 50px; background: transparent;
-            color: var(--gold); border: 2px solid var(--gold); font-family: 'Cinzel', serif;
-            font-size: 22px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
-            transition: 0.3s;
+            margin-top: 60px; padding: 15px 40px; 
+            background-color: var(--pop-yellow);
+            color: var(--pop-black); 
+            border: 4px solid var(--pop-black); 
+            font-family: 'Bangers', cursive;
+            font-size: 26px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            transition: 0.1s;
+            box-shadow: 5px 5px 0px var(--pop-black);
         }
-        button:active { background: var(--gold); color: #000; }
-        button:disabled { opacity: 0.3; }
+        button:active { 
+            transform: translate(3px, 3px); 
+            box-shadow: 2px 2px 0px var(--pop-black);
+        }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -103,15 +159,13 @@
             "Mini-Interview führen", "Tagebuch schreiben", "Eigene Idee umsetzen", "Kleines Projekt starten"
         ];
 
-        const suits = [
-            { s: "♠", c: "var(--poker-black)" }, { s: "♥", c: "var(--poker-red)" }, 
-            { s: "♣", c: "var(--poker-black)" }, { s: "♦", c: "var(--poker-red)" }
-        ];
+        const suits = ["♥", "♦", "♣", "♠"];
 
         const deck = document.getElementById('deck');
         const btn = document.getElementById('actionBtn');
 
         function playMagicSound() {
+            // ... (Sound-Code bleibt gleich) ...
             try {
                 const context = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = context.createOscillator();
@@ -131,10 +185,10 @@
         function createDeck() {
             if (!deck) return;
             deck.innerHTML = '';
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 8; i++) {
                 const container = document.createElement('div');
                 container.className = 'card-container';
-                container.style.transform = `translateZ(${-i * 3}px)`;
+                container.style.transform = `translateZ(${-i * 4}px) rotate(${Math.random() * 4 - 2}deg)`;
                 container.innerHTML = `<div class="card card-back"></div><div class="card card-front"></div>`;
                 deck.appendChild(container);
             }
@@ -145,25 +199,33 @@
             btn.disabled = true;
             createDeck();
             const cards = document.querySelectorAll('.card-container');
-            cards.forEach((c, idx) => setTimeout(() => c.classList.add('shuffle'), idx * 30));
+            cards.forEach((c, idx) => setTimeout(() => c.classList.add('shuffle'), idx * 50));
 
             setTimeout(() => {
                 cards.forEach(c => c.classList.remove('shuffle'));
                 playMagicSound();
                 const selected = cards[Math.floor(Math.random() * cards.length)];
                 const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-                const randomSuit = suits[Math.floor(Math.random() * 4)];
+                const randomSuit = suits[Math.floor(Math.random() * suits.length)];
                 const front = selected.querySelector('.card-front');
-                front.style.color = randomSuit.c;
-                front.innerHTML = `<div class="suit top-left">${randomSuit.s}</div><div style="padding: 10px;">${randomPhrase}</div><div class="suit bottom-right">${randomSuit.s}</div>`;
+                
+                // Farbe je nach Symbol anpassen (optional, hier alle rot für Pop-Art)
+                // front.style.color = (randomSuit === "♥" || randomSuit === "♦") ? "var(--pop-red)" : "var(--pop-black)";
+                
+                // Text in Container für Umbruch
+                front.innerHTML = `
+                    <div class="suit top-left">${randomSuit}</div>
+                    <div class="text-content">${randomPhrase}</div>
+                    <div class="suit bottom-right">${randomSuit}</div>
+                `;
                 selected.classList.add('drawn');
                 btn.disabled = false;
-            }, 1000);
+            }, 1500);
         }
 
         // Initialisierung
         window.onload = () => {
-            console.log("App geladen");
+            console.log("Pop-Art App geladen");
             createDeck();
         };
     </script>
