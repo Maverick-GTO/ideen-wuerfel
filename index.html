@@ -6,55 +6,81 @@
     <title>Ideen-Würfel</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .scene { width: 250px; height: 250px; perspective: 1000px; transition: transform 1s; }
-        #dice { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: translateZ(-100px); transition: transform 2s cubic-bezier(0.15, 0, 0.15, 1); }
-        .face { position: absolute; width: 0; height: 0; border-left: 60px solid transparent; border-right: 60px solid transparent; border-bottom: 105px solid rgba(0, 255, 255, 0.8); border-top: 0; transform-origin: 50% 100%; display: flex; align-items: center; justify-content: center; backface-visibility: visible; box-shadow: 0 0 5px #00ffff; }
-        .face span { position: absolute; top: 40px; width: 100px; left: -50px; text-align: center; font-size: 10px; color: #000; font-weight: bold; pointer-events: none; }
-        button { margin-top: 50px; padding: 20px 40px; font-size: 24px; background: #ff00ff; color: white; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 0 15px #ff00ff; z-index: 10; }
-        .zoom { transform: scale(1.8) translateZ(150px) !important; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        
+        /* Die Bühne */
+        .scene { width: 300px; height: 300px; perspective: 1200px; display: flex; align-items: center; justify-content: center; transition: transform 1s ease-in-out; }
+        
+        /* Der Würfel-Container */
+        #dice { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(20deg); transition: transform 2.5s cubic-bezier(0.2, 0, 0.2, 1); }
+
+        /* Basis-Stil für jede Fläche (Dreieck) */
+        .face { position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-left: 50px solid transparent; border-right: 50px solid transparent; border-bottom: 86.6px solid rgba(0, 255, 255, 0.4); border-top: 0; margin-top: -43.3px; margin-left: -50px; transform-origin: 50% 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 0 5px #00ffff); border-bottom-color: rgba(0, 150, 255, 0.7); }
+
+        /* Der Text auf den Flächen */
+        .face span { position: absolute; top: 35px; width: 80px; left: -40px; text-align: center; font-size: 9px; color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; pointer-events: none; line-height: 1.1; }
+
+        button { margin-top: 80px; padding: 15px 40px; font-size: 22px; background: linear-gradient(45deg, #ff00ff, #8800ff); color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 0, 255, 0.6); z-index: 100; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+        
+        button:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(255, 0, 255, 0.8); }
+
+        /* Fokus-Effekt für den Spruch */
+        .zoom { transform: scale(2.2) !important; }
+        .active-text { font-size: 14px !important; color: #ff00ff !important; text-shadow: 0 0 10px #fff !important; }
     </style>
 </head>
 <body>
     <div class="scene" id="scene">
         <div id="dice"></div>
     </div>
-    <button onclick="roll()">GO</button>
+    <button onclick="roll()">Würfeln</button>
 
     <script>
         const phrases = [
-            "Hörspiel hören", "Sendung schauen", "Buch/Comic lesen", "Bild malen",
+            "Hörspiel hören", "Sendung schauen", "Buch lesen", "Bild malen",
             "Geschichte schreiben", "Thema recherchieren", "Brettspiel spielen", "Rätsel lösen",
             "Kreidezeichnung", "Puzzle lösen", "Instrument üben", "Experiment machen",
-            "Meinung schreiben", "Spaziergang", "Lied mitsingen", "Origami falten",
+            "Meinung aufschreiben", "Spaziergang", "Lied mitsingen", "Origami falten",
             "Tagebuch schreiben", "Snack zubereiten", "Lern-Quiz", "Aufräumen"
         ];
 
         const dice = document.getElementById('dice');
-        // Vereinfachte 3D-Platzierung für 20 Flächen
-        for (let i = 0; i < 20; i++) {
+        const faces = 20;
+        
+        // Erzeuge 20 Flächen mit verschiedenen Rotationen
+        for (let i = 0; i < faces; i++) {
             const face = document.createElement('div');
             face.className = 'face';
-            face.innerHTML = `<span>${phrases[i]}</span>`;
-            // Mathematische Verteilung der Flächen (vereinfacht für CSS 3D)
-            const phi = Math.acos(-1 + (2 * i) / 20);
-            const theta = Math.sqrt(20 * Math.PI) * phi;
-            face.style.transform = `rotateY(${theta}rad) rotateX(${phi}rad) translateZ(120px)`;
+            face.innerHTML = `<span id="text-${i}">${phrases[i]}</span>`;
+            
+            // Mathematische Anordnung für einen "Pseudo-Ikosaeder"
+            const angleY = i * 72; // 5 Flächen pro Ring
+            const angleX = (i < 5) ? 30 : (i < 15 ? 90 : 150);
+            const offset = (i >= 5 && i < 10) ? 36 : 0;
+            
+            face.style.transform = `rotateY(${angleY + offset}deg) rotateX(${i * 18}deg) translateZ(90px)`;
             dice.appendChild(face);
         }
 
         function roll() {
-            document.getElementById('scene').classList.remove('zoom');
-            const randX = Math.floor(Math.random() * 2000) + 1000;
-            const randY = Math.floor(Math.random() * 2000) + 1000;
-            dice.style.transform = `translateZ(-100px) rotateX(${randX}deg) rotateY(${randY}deg)`;
+            const scene = document.getElementById('scene');
+            scene.classList.remove('zoom');
             
+            // Zufällige Rotation
+            const x = Math.floor(Math.random() * 10) * 360 + (Math.random() * 360);
+            const y = Math.floor(Math.random() * 10) * 360 + (Math.random() * 360);
+            
+            dice.style.transform = `rotateX(${x}deg) rotateY(${y}deg)`;
+            
+            // Zoom nach dem Rollen
             setTimeout(() => {
-                document.getElementById('scene').classList.add('zoom');
-            }, 2100);
+                scene.classList.add('zoom');
+            }, 2600);
         }
 
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
     </script>
 </body>
 </html>
