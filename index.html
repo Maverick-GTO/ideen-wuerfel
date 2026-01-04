@@ -7,59 +7,85 @@
     <title>Magische Karten 16-Bit</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/pixel-art-icons@1.8.1/font/pixel-art-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixel-art-icons@1.8.1/font/pixel-art-icons.css">
     <style>
         :root {
+            --pop-red: #990000;
             --pop-red-bright: #ff0000;
             --pop-yellow: #ffd700;
+            --pop-green: #006400;
+            --pop-green-bright: #00ff00;
+            --pop-blue: #0000cc;
+            --pop-blue-bright: #00ffff;
             --pop-black: #000000;
             --bg-dark-blue: #040426;
         }
 
         body {
-            margin: 0; background-color: var(--bg-dark-blue);
+            margin: 0;
+            background-color: var(--bg-dark-blue);
             background-image: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="15" r="4" fill="%234da6ff"/><circle cx="45" cy="15" r="4" fill="%23ffffff"/><circle cx="15" cy="45" r="4" fill="%23ff66b3"/><circle cx="45" cy="45" r="4" fill="%239933ff"/></svg>');
-            background-size: 60px 60px; font-family: 'Bangers', cursive;
+            background-size: 60px 60px;
+            font-family: 'Bangers', cursive;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             height: 100vh; overflow: hidden;
         }
 
+        /* Kategorie-Buttons mit festen Farben */
         .controls { display: flex; gap: 12px; margin-bottom: 55px; z-index: 100; }
         .cat-btn {
-            padding: 15px 25px; font-family: 'Bangers', cursive; font-size: 22px;
+            padding: 15px 22px; font-family: 'Bangers', cursive; font-size: 22px;
             border: 4px solid var(--pop-black); cursor: pointer; text-transform: uppercase;
-            box-shadow: 5px 5px 0 var(--pop-black); color: white; -webkit-text-stroke: 1.5px var(--pop-black);
+            box-shadow: 5px 5px 0 var(--pop-black); transition: 0.1s;
+            color: white; -webkit-text-stroke: 1px var(--pop-black);
         }
-        .cat-btn.active { box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
-        #btn-drinnen.active { background: #00ff00; }
-        #btn-draussen.active { background: #ff0000; }
-        #btn-lernen.active { background: #00ffff; }
+        
+        #btn-drinnen { background: var(--pop-green); }
+        #btn-drinnen.active { background: var(--pop-green-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
+        
+        #btn-draussen { background: var(--pop-red); }
+        #btn-draussen.active { background: var(--pop-red-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
+        
+        #btn-lernen { background: var(--pop-blue); }
+        #btn-lernen.active { background: var(--pop-blue-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
 
+        /* Karten-Stapel */
         .deck { position: relative; width: 280px; height: 390px; perspective: 1200px; z-index: 10; }
         .card-container { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; transition: all 0.8s; }
         .card {
             position: absolute; width: 100%; height: 100%; border-radius: 15px;
             backface-visibility: hidden; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; padding: 20px;
+            align-items: center; justify-content: center; padding: 25px;
             text-align: center; box-sizing: border-box; border: 5px solid var(--pop-black);
             box-shadow: 8px 8px 0px var(--pop-black); background-color: #fff;
         }
-        .card-back { background-color: #0000ff; z-index: 2; }
-        .card-front { transform: rotateY(180deg); z-index: 1; font-size: 28px; color: var(--pop-black); }
-
-        /* Pixel-Icon Style */
-        .pixel-icon {
-            font-size: 70px; /* Grösse des 16-Bit Bildes */
-            margin-bottom: 15px;
-            color: var(--pop-black);
+        .card-back {
+            background-color: #0000ff;
+            background-image: radial-gradient(var(--pop-black) 20%, transparent 21%);
+            background-size: 15px 15px; z-index: 2;
+        }
+        .card-back::after {
+            content: '★'; font-size: 100px; color: var(--pop-yellow);
+            -webkit-text-stroke: 3px var(--pop-black); text-shadow: 5px 5px 0 var(--pop-black);
+        }
+        .card-front {
+            background-image: radial-gradient(rgba(230, 0, 0, 0.1) 15%, transparent 16%);
+            background-size: 12px 12px; color: var(--pop-black);
+            transform: rotateY(180deg); z-index: 1; font-size: 28px; line-height: 1.1;
+            text-transform: uppercase;
         }
 
-        .text-content { line-height: 1.1; text-transform: uppercase; }
+        /* Pixel-Icon Style */
+        .pixel-icon { font-size: 80px; margin-bottom: 10px; color: var(--pop-black); display: block; }
+
+        .suit { position: absolute; font-size: 60px; color: var(--pop-red); -webkit-text-stroke: 2px var(--pop-black); text-shadow: 2px 2px 0 var(--pop-black); }
+        .top-left { top: 15px; left: 15px; }
+        .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
 
         #comic-overlay {
             position: absolute; pointer-events: none; opacity: 0; z-index: 2000;
             font-size: 90px; color: var(--pop-yellow); -webkit-text-stroke: 4px var(--pop-black);
-            text-shadow: 7px 7px 0 var(--pop-black);
+            text-shadow: 7px 7px 0 var(--pop-black); transform: scale(0);
         }
         .comic-active { animation: comic-impact 1.2s forwards; }
         @keyframes comic-impact {
@@ -70,10 +96,12 @@
 
         #go-btn {
             margin-top: 40px; padding: 20px 80px; background-color: var(--pop-yellow);
-            border: 5px solid var(--pop-black); font-family: 'Bangers', cursive;
-            font-size: 40px; cursor: pointer; box-shadow: 8px 8px 0px var(--pop-black);
+            color: var(--pop-black); border: 5px solid var(--pop-black); 
+            font-family: 'Bangers', cursive; font-size: 40px; cursor: pointer; 
+            text-transform: uppercase; box-shadow: 8px 8px 0px var(--pop-black);
         }
-        .drawn { transform: scale(1.12) translateY(-25px) rotateY(180deg) !important; z-index: 1000 !important; }
+        #go-btn:active { transform: translate(4px, 4px); box-shadow: 3px 3px 0px var(--pop-black); }
+        .drawn { transform: scale(1.12) translateY(-25px) rotateY(180deg) !important; z-index: 1000 !important; box-shadow: 25px 25px 0px rgba(0,0,0,0.5) !important; }
     </style>
 </head>
 <body>
@@ -82,6 +110,7 @@
         <button class="cat-btn" id="btn-draussen" onclick="setCategory('draussen')">Draussen</button>
         <button class="cat-btn" id="btn-lernen" onclick="setCategory('lernen')">Lernen</button>
     </div>
+
     <div class="deck" id="deck"></div>
     <div id="comic-overlay">BOOM!</div>
     <button id="go-btn" onclick="drawCard()">GO</button>
@@ -89,59 +118,104 @@
     <script>
         const data = {
             drinnen: [
-                { text: "Hörspiel hören", icon: "pair" },
-                { text: "Lego-Stadt bauen", icon: "widgets" },
-                { text: "Foto machen", icon: "camera" } // Leica Ersatz
+                { t: "Hörspiel hören", i: "music" }, { t: "Hörbuch hören", i: "book" }, { t: "Lieblingssendung", i: "device-tv" },
+                { t: "Comic lesen", i: "book-open" }, { t: "Spannendes Buch", i: "book" }, { t: "Lego-Stadt bauen", i: "widgets" },
+                { t: "Fantasiefigur", i: "user" }, { t: "Geschichte schreiben", i: "notes" }, { t: "Tagebuch führen", i: "edit" },
+                { t: "Zeichnen oder malen", i: "paint-bucket" }, { t: "Basteln Karton", i: "archive" }, { t: "Recyclingbasteln", i: "refresh" },
+                { t: "Origami falten", i: "wind" }, { t: "Puzzle lösen", i: "grid" }, { t: "Gesellschaftsspiel", i: "tournament" },
+                { t: "Kartentrick", i: "layers" }, { t: "Zaubertrick", i: "Zap" }, { t: "Jonglieren üben", i: "loader" },
+                { t: "Instrument spielen", i: "volume-2" }, { t: "Lied singen", i: "volume-up" }, { t: "Tanz erfinden", i: "human-run" },
+                { t: "Foto machen", i: "camera" }, { t: "Kurzen Film drehen", i: "video" }, { t: "Zimmer umgestalten", i: "home" },
+                { t: "Etwas reparieren", i: "wrench" }, { t: "Modell bauen", i: "briefcase" }, { t: "Experiment", i: "flask" },
+                { t: "Quiz spielen", i: "help" }, { t: "Rätsel lösen", i: "search" }, { t: "Kochen helfen", i: "coffee" },
+                { t: "Anleitung schreiben", i: "list" }, { t: "Spiel erklären", i: "message" }, { t: "Präsentation", i: "layout" },
+                { t: "Eigene Idee", i: "heart" }, { t: "Mini-Projekt", i: "flag" }, { t: "Challenge", i: "trophy" }
             ],
             draussen: [
-                { text: "Wald erkunden", icon: "tree" },
-                { text: "Velofahren", icon: "bicycle" },
-                { text: "Foto-Challenge", icon: "camera" }
+                { t: "Draussen spielen", i: "sun" }, { t: "Boggia spielen", i: "vibrate" }, { t: "Velofahren", i: "bicycle" },
+                { t: "Skateboard fahren", i: "fast-forward" }, { t: "Spaziergang", i: "human-walk" }, { t: "Wald erkunden", i: "tree" },
+                { t: "Park entdecken", i: "map" }, { t: "Tiere beobachten", i: "eye" }, { t: "Pflanzen bestimmen", i: "list" },
+                { t: "Blätter sammeln", i: "download" }, { t: "Steine sammeln", i: "codepen" }, { t: "Naturtagebuch", i: "edit" },
+                { t: "Schatzsuche", i: "search" }, { t: "Abfall sammeln", i: "trash" }, { t: "Müll sortieren", i: "refresh" },
+                { t: "Umweltplakat", i: "image" }, { t: "Kreidezeichnung", i: "edit" }, { t: "Demonstration", i: "users" },
+                { t: "Museum besuchen", i: "home" }, { t: "Parcours bauen", i: "shuffle" }, { t: "Picknick", i: "coffee" },
+                { t: "Draussen lesen", i: "book-open" }, { t: "Draussen malen", i: "paint-bucket" }, { t: "Foto-Challenge", i: "camera" },
+                { t: "Wolken schauen", i: "cloud" }, { t: "Sterne zählen", i: "star" }, { t: "Wetter prüfen", i: "cloud-sun" },
+                { t: "Blumen pflanzen", i: "heart" }, { t: "Ins Kino gehen", i: "video" }, { t: "Vögel beobachten", i: "eye" },
+                { t: "Nachbarn grüssen", i: "message" }, { t: "Nachbarn klingeln", i: "alert" }, { t: "Freundin anrufen", i: "phone" },
+                { t: "Mini-Interview", i: "mic" }, { t: "Kleine Aufführung", i: "play" }, { t: "Abenteuer-Spiel", i: "map" }
             ],
             lernen: [
-                { text: "Sachbuch lesen", icon: "book" },
-                { text: "Experiment planen", icon: "flask" },
-                { text: "Mindmap erstellen", icon: "device-hub" }
+                { t: "Sachbuch lesen", i: "book" }, { t: "Wissensvideo", i: "video" }, { t: "Dokumentation", i: "device-tv" },
+                { t: "Thema recherchieren", i: "search" }, { t: "Vortrag halten", i: "mic" }, { t: "Referat planen", i: "list" },
+                { t: "Mindmap erstellen", i: "git-branch" }, { t: "Quiz erfinden", i: "help" }, { t: "Quiz lösen", i: "check" },
+                { t: "Logikrätsel", i: "command" }, { t: "Knobelaufgabe", i: "cpu" }, { t: "Mathe-Spiel", i: "plus" },
+                { t: "Lern-App nutzen", i: "smartphone" }, { t: "Vokabeln lernen", i: "book-open" }, { t: "Fremdsprache hören", i: "volume-up" },
+                { t: "Fremdsprache reden", i: "message" }, { t: "Experiment planen", i: "flask" }, { t: "Experiment auswerten", i: "trending-up" },
+                { t: "Notizen machen", i: "edit" }, { t: "Diagramm zeichnen", i: "bar-chart" }, { t: "Zeitachse", i: "clock" },
+                { t: "Sachthema erklären", i: "mic" }, { t: "Lernplakat", i: "layout" }, { t: "Lernkartei", i: "layers" },
+                { t: "Zusammenfassung", i: "align-left" }, { t: "Präsentation", i: "monitor" }, { t: "Lernspiel erklären", i: "message" },
+                { t: "Anderen beibringen", i: "users" }, { t: "Interview planen", i: "list" }, { t: "Interview führen", i: "mic" },
+                { t: "Fragen formulieren", i: "help" }, { t: "Diskussion führen", i: "message" }, { t: "Meinung begründen", i: "check" },
+                { t: "Lernziel festlegen", i: "flag" }, { t: "Lernprojekt planen", i: "calendar" }, { t: "Lernprojekt fertig", i: "trophy" }
             ]
         };
 
+        const comicWords = ["BOOM!", "POW!", "ZAP!", "WOW!", "CRACK!"];
+        const suits = ["♥", "♦", "♣", "♠"];
         let currentCategory = 'drinnen';
-        const comicWords = ["BOOM!", "POW!", "ZAP!", "WOW!"];
-
+        
         function setCategory(cat) {
             currentCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn-${cat}`).classList.add('active');
         }
 
-        function drawCard() {
+        function createDeck() {
             const deck = document.getElementById('deck');
             deck.innerHTML = '';
-            const container = document.createElement('div');
-            container.className = 'card-container';
-            
-            const categoryData = data[currentCategory];
-            const item = categoryData[Math.floor(Math.random() * categoryData.length)];
-            
-            container.innerHTML = `
-                <div class="card card-back"></div>
-                <div class="card card-front">
-                    <i class="pixel-icon pi-${item.icon}"></i>
-                    <div class="text-content">${item.text}</div>
-                </div>
-            `;
-            deck.appendChild(container);
+            for (let i = 0; i < 8; i++) {
+                const container = document.createElement('div');
+                container.className = 'card-container';
+                container.style.transform = `translateZ(${-i * 4}px) rotate(${Math.random() * 4 - 2}deg)`;
+                container.innerHTML = `<div class="card card-back"></div><div class="card card-front"></div>`;
+                deck.appendChild(container);
+            }
+        }
+
+        function drawCard() {
+            const goBtn = document.getElementById('go-btn');
+            goBtn.disabled = true;
+            createDeck();
+            const cards = document.querySelectorAll('.card-container');
+            cards.forEach((c, idx) => setTimeout(() => c.classList.add('shuffle'), idx * 50));
 
             setTimeout(() => {
-                container.classList.add('drawn');
-                if (Math.random() > 0.5) {
+                cards.forEach(c => c.classList.remove('shuffle'));
+                const selected = cards[cards.length - 1];
+                const item = data[currentCategory][Math.floor(Math.random() * 36)];
+                const randomSuit = suits[Math.floor(Math.random() * 4)];
+                const front = selected.querySelector('.card-front');
+                
+                front.innerHTML = `
+                    <div class="suit top-left">${randomSuit}</div>
+                    <i class="pixel-icon pixel-${item.i}"></i>
+                    <div class="text-content"><span>${item.t}</span></div>
+                    <div class="suit bottom-right">${randomSuit}</div>
+                `;
+                selected.classList.add('drawn');
+                
+                if (Math.random() > 0.4) {
                     const overlay = document.getElementById('comic-overlay');
                     overlay.innerText = comicWords[Math.floor(Math.random() * comicWords.length)];
                     overlay.classList.add('comic-active');
                     setTimeout(() => overlay.classList.remove('comic-active'), 1200);
                 }
-            }, 100);
+                goBtn.disabled = false;
+            }, 1000);
         }
+
+        window.addEventListener('DOMContentLoaded', createDeck);
     </script>
 </body>
 </html>
