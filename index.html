@@ -7,7 +7,7 @@
     <title>Magische Karten</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixel-art-icons@1.8.1/font/pixel-art-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/pixel-art-icons@1.8.1/font/pixel-art-icons.css">
     <style>
         :root {
             --pop-red: #990000;
@@ -37,16 +37,17 @@
             border: 4px solid var(--pop-black); cursor: pointer; text-transform: uppercase;
             box-shadow: 5px 5px 0 var(--pop-black); transition: 0.1s;
             color: white; -webkit-text-stroke: 1px var(--pop-black);
+            background-color: var(--pop-black); /* Fallback Farbe */
         }
         
-        #btn-drinnen { background: var(--pop-green); }
-        #btn-drinnen.active { background: var(--pop-green-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
+        #btn-drinnen { background-color: var(--pop-green); }
+        #btn-drinnen.active { background-color: var(--pop-green-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
         
-        #btn-draussen { background: var(--pop-red); }
-        #btn-draussen.active { background: var(--pop-red-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
+        #btn-draussen { background-color: var(--pop-red); }
+        #btn-draussen.active { background-color: var(--pop-red-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
         
-        #btn-lernen { background: var(--pop-blue); }
-        #btn-lernen.active { background: var(--pop-blue-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
+        #btn-lernen { background-color: var(--pop-blue); }
+        #btn-lernen.active { background-color: var(--pop-blue-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
 
         .deck { position: relative; width: 280px; height: 390px; perspective: 1200px; z-index: 10; }
         .card-container { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; transition: all 0.8s; }
@@ -71,22 +72,37 @@
             background-image: radial-gradient(rgba(230, 0, 0, 0.1) 15%, transparent 16%);
             background-size: 12px 12px; color: var(--pop-black);
             transform: rotateY(180deg); z-index: 1;
-            display: flex; flex-direction: column; padding: 25px;
+            display: flex; flex-direction: column; padding: 20px;
         }
 
-        .card-top-half { flex: 1.2; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10px; width: 100%; }
-        .card-bottom-half { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding-top: 5px; width: 100%; }
+        /* Aufteilung der Karte */
+        .card-top-half { 
+            flex: 1.3; /* Oberer Teil etwas grösser für das Icon */
+            display: flex; justify-content: center; align-items: center; 
+            width: 100%; 
+        }
+        .card-bottom-half { 
+            flex: 1; 
+            display: flex; justify-content: center; align-items: flex-start; 
+            padding-top: 10px; width: 100%; 
+        }
 
-        .pixel-icon { font-size: 110px; color: var(--pop-black); display: block; }
+        /* Icon Stil angepasst für bessere Darstellung */
+        .pixel-icon { 
+            font-size: 120px; 
+            color: var(--pop-black); 
+            display: inline-block; /* Hilft manchmal bei Darstellungsproblemen */
+            line-height: 1;
+        }
 
         .text-content {
-            font-size: 28px; line-height: 1.1; text-transform: uppercase;
+            font-size: 26px; line-height: 1.1; text-transform: uppercase;
             hyphens: auto; -webkit-hyphens: auto; word-break: break-word; overflow-wrap: break-word;
         }
 
         .suit { position: absolute; font-size: 60px; color: var(--pop-red); -webkit-text-stroke: 2px var(--pop-black); text-shadow: 2px 2px 0 var(--pop-black); }
-        .top-left { top: 15px; left: 15px; }
-        .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
+        .top-left { top: 10px; left: 10px; }
+        .bottom-right { bottom: 10px; right: 10px; transform: rotate(180deg); }
 
         #comic-overlay {
             position: absolute; pointer-events: none; opacity: 0; z-index: 2000;
@@ -220,6 +236,7 @@
                 
                 selected.classList.add('drawn');
                 playCardSound();
+                
                 if (Math.random() > 0.4) {
                     const overlay = document.getElementById('comic-overlay');
                     overlay.innerText = comicWords[Math.floor(Math.random() * comicWords.length)];
