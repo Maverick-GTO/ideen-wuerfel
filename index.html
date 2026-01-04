@@ -7,7 +7,7 @@
     <title>Magische Karten</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixel-art-icons@1.8.1/font/pixel-art-icons.css?v=4">
+    <link rel="stylesheet" href="https://unpkg.com/pixel-art-icons@1.8.1/font/pixel-art-icons.css?v=5">
     <style>
         :root {
             --pop-red: #990000;
@@ -77,13 +77,10 @@
         .card-top-half { flex: 1.2; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10px; width: 100%; }
         .card-bottom-half { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding-top: 5px; width: 100%; }
 
-        /* Pixel Icon Style */
         .pixel-icon { font-size: 110px; color: var(--pop-black); display: block; line-height: 1; }
 
-        /* Text Grösse angepasst */
         .text-content {
-            font-size: 34px; /* HIER GEÄNDERT: Von 28px auf 34px vergrössert */
-            line-height: 1.1; text-transform: uppercase;
+            font-size: 34px; line-height: 1.1; text-transform: uppercase;
             hyphens: auto; -webkit-hyphens: auto; word-break: break-word; overflow-wrap: break-word;
         }
 
@@ -91,7 +88,7 @@
         .top-left { top: 15px; left: 15px; }
         .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
 
-        /* COMIC EFFEKT */
+        /* COMIC EFFEKT - MASSIV VERGRÖSSERT */
         #comic-overlay {
             position: fixed; top: 50%; left: 50%;
             pointer-events: none; opacity: 0; z-index: 3000;
@@ -201,6 +198,17 @@
             }
         }
 
+        function triggerComicEffect() {
+            if (Math.random() > 0.16) return; // Wahrscheinlichkeit auf ca. 1/6 reduziert
+            const word = comicWords[Math.floor(Math.random() * comicWords.length)];
+            const overlay = document.getElementById('comic-overlay');
+            overlay.innerText = word;
+            overlay.classList.remove('comic-active');
+            void overlay.offsetWidth; 
+            overlay.classList.add('comic-active');
+            setTimeout(() => overlay.classList.remove('comic-active'), 1200);
+        }
+
         function drawCard() {
             const goBtn = document.getElementById('go-btn');
             if (goBtn.disabled) return;
@@ -229,13 +237,7 @@
                 
                 selected.classList.add('drawn');
                 playCardSound();
-                
-                if (Math.random() > 0.4) {
-                    const overlay = document.getElementById('comic-overlay');
-                    overlay.innerText = comicWords[Math.floor(Math.random() * comicWords.length)];
-                    overlay.classList.add('comic-active');
-                    setTimeout(() => overlay.classList.remove('comic-active'), 1200);
-                }
+                triggerComicEffect();
                 goBtn.disabled = false;
             }, 1000);
         }
