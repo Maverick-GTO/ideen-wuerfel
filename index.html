@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Poker-Ideen</title>
+    <title>Fantasy Poker Karten</title>
     <link rel="manifest" href="manifest.json">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
+
         :root {
-            --poker-red: #e0115f;
+            --poker-red: #af0000;
             --poker-black: #1a1a1a;
-            --gold: #d4af37;
-            --table-green: #0a4d26;
+            --gold: #c5a059;
+            --magic-bg: #050510;
         }
 
         body {
             margin: 0;
-            background: radial-gradient(circle, var(--table-green) 0%, #052613 100%);
+            background: radial-gradient(circle, #1a1a2e 0%, var(--magic-bg) 100%);
             color: #fff;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Cinzel', serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -26,11 +28,10 @@
             overflow: hidden;
         }
 
-        /* Karten-Stapel */
         .deck {
             position: relative;
             width: 220px;
-            height: 310px;
+            height: 320px;
             perspective: 1200px;
         }
 
@@ -46,7 +47,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            border-radius: 12px;
+            border-radius: 10px;
             backface-visibility: hidden;
             display: flex;
             flex-direction: column;
@@ -55,76 +56,71 @@
             padding: 20px;
             text-align: center;
             box-sizing: border-box;
-            background: #fff;
-            border: 1px solid #999;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            border: 2px solid var(--gold);
         }
 
-        /* Rückseite: Klassisches Poker-Muster */
+        /* Rückseite: Fantasy-Muster */
         .card-back {
-            background: linear-gradient(135deg, #8b0000, #4b0000);
+            background: linear-gradient(135deg, #1a1a2e, #050510);
             z-index: 2;
-            border: 6px solid #fff;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 5 L95 50 L50 95 L5 50 Z" fill="none" stroke="%23c5a059" stroke-width="2"/></svg>');
+            background-size: 50px 50px;
         }
 
-        /* Vorderseite */
+        /* Vorderseite: Pergament-Look */
         .card-front {
+            background: #e8d5b5; /* Pergamentfarbe */
             color: #000;
             transform: rotateY(180deg);
             z-index: 1;
             font-weight: bold;
             font-size: 20px;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.2);
         }
 
-        /* Poker-Symbole an den Ecken */
-        .suit { position: absolute; font-size: 28px; }
+        .suit { position: absolute; font-size: 32px; opacity: 0.8; }
         .top-left { top: 10px; left: 10px; }
         .bottom-right { bottom: 10px; right: 10px; transform: rotate(180deg); }
 
-        /* Animation beim Mischen */
         .shuffle {
             animation: shuffle-move 0.5s ease-in-out infinite;
         }
 
         @keyframes shuffle-move {
-            0%, 100% { transform: translateX(0) translateZ(0); }
-            50% { transform: translateX(130px) rotate(8deg) translateZ(50px); }
+            0%, 100% { transform: translateX(0) rotate(0); }
+            50% { transform: translateX(140px) rotate(12deg) translateZ(50px); }
         }
 
-        /* Gezogene Karte */
         .drawn {
-            transform: scale(1.3) translateY(-40px) rotateY(180deg) !important;
+            transform: scale(1.35) translateY(-30px) rotateY(180deg) !important;
             z-index: 1000 !important;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.7);
-            border: 2px solid var(--gold) !important;
+            box-shadow: 0 0 40px rgba(0, 210, 255, 0.6);
+            border: 3px solid #00d2ff !important;
         }
 
-        /* Button */
         button {
             margin-top: 50px;
-            padding: 18px 45px;
-            background: var(--gold);
-            color: #000;
-            border: 2px solid #fff;
-            border-radius: 8px;
+            padding: 15px 50px;
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            font-family: 'Cinzel', serif;
             font-size: 22px;
-            font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 5px 0 #8b6b00;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.1s;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            z-index: 100;
         }
 
-        button:active { transform: translateY(3px); box-shadow: 0 2px 0 #8b6b00; }
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        button:active { background: var(--gold); color: #000; }
+        button:disabled { opacity: 0.5; }
     </style>
 </head>
 <body>
 
     <div class="deck" id="deck"></div>
-
     <button id="actionBtn" onclick="drawCard()">Mischen & Ziehen</button>
 
     <script>
@@ -152,18 +148,14 @@
         function createDeck() {
             deck.innerHTML = '';
             cardElements = [];
-            // Wir erstellen optisch 10 Karten im Stapel
             for (let i = 0; i < 10; i++) {
                 const container = document.createElement('div');
                 container.className = 'card-container';
                 container.style.transform = `translateZ(${-i * 3}px)`;
-                
                 const back = document.createElement('div');
                 back.className = 'card card-back';
-                
                 const front = document.createElement('div');
                 front.className = 'card card-front';
-                
                 container.appendChild(back);
                 container.appendChild(front);
                 deck.appendChild(container);
@@ -171,29 +163,30 @@
             }
         }
 
+        function playSound(file) {
+            const audio = new Audio(file);
+            audio.play().catch(e => console.log("Audio-Fehler: ", e));
+        }
+
         function drawCard() {
             btn.disabled = true;
             
-            // Sound-Logik für 3 Dateien
+            // Mischen-Sound
             const soundNum = Math.floor(Math.random() * 3) + 1;
-            const audio = new Audio(`shuffle${soundNum}.mp3`);
-            audio.play().catch(() => console.log("Sound-Dateien fehlen im Repository."));
+            playSound(`shuffle${soundNum}.mp3`);
 
             createDeck();
-
-            // Mischen starten
             cardElements.forEach((c, idx) => {
                 setTimeout(() => c.classList.add('shuffle'), idx * 30);
             });
 
             setTimeout(() => {
-                // Mischen stoppen
                 cardElements.forEach(c => c.classList.remove('shuffle'));
-
-                // Zufällige Karte aus dem Stapel wählen
-                const selected = cardElements[Math.floor(Math.random() * cardElements.length)];
                 
-                // Zufälligen Spruch und Poker-Farbe wählen
+                // Ziehen-Sound
+                playSound('draw.mp3');
+
+                const selected = cardElements[Math.floor(Math.random() * cardElements.length)];
                 const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
                 const randomSuit = suits[Math.floor(Math.random() * 4)];
 
@@ -201,19 +194,17 @@
                 front.style.color = randomSuit.c;
                 front.innerHTML = `
                     <div class="suit top-left">${randomSuit.s}</div>
-                    <div style="padding: 0 10px;">${randomPhrase}</div>
+                    <div style="padding: 0 15px;">${randomPhrase}</div>
                     <div class="suit bottom-right">${randomSuit.s}</div>
                 `;
 
                 selected.classList.add('drawn');
                 btn.disabled = false;
-            }, 1200); // Dauer der Animation
+            }, 1200);
         }
 
-        // Initialisierung
         createDeck();
 
-        // Service Worker für Offline-Funktion
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
         }
