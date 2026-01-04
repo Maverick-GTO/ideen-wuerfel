@@ -9,13 +9,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
     <style>
         :root {
-            --pop-red: #e60000;
+            --pop-red: #990000;
+            --pop-red-bright: #ff0000; /* Knalliges Comic-Rot */
             --pop-yellow: #ffd700;
-            --pop-yellow-bright: #ffff00;
-            --pop-green: #008000;
+            --pop-green: #006400;
             --pop-green-bright: #00ff00;
-            --pop-blue-btn: #0055ff;
-            --pop-blue-bright: #00d2ff;
+            --pop-blue-btn: #0000cc;
+            --pop-blue-bright: #00ffff; /* Knalliges Electric Blue */
             --pop-black: #000000;
             --bg-dark-blue: #040426;
         }
@@ -31,25 +31,25 @@
             height: 100vh; overflow: hidden;
         }
 
-        /* Kategorie-Buttons oben */
+        /* Kategorie-Buttons vergrössert und positioniert */
         .controls {
-            display: flex; gap: 10px; margin-bottom: 30px; z-index: 100;
+            display: flex; gap: 12px; margin-bottom: 25px; z-index: 100;
         }
         .cat-btn {
-            padding: 12px 18px; font-family: 'Bangers', cursive; font-size: 18px;
+            padding: 15px 25px; font-family: 'Bangers', cursive; font-size: 22px;
             border: 4px solid var(--pop-black); cursor: pointer; text-transform: uppercase;
-            box-shadow: 4px 4px 0 var(--pop-black); transition: 0.2s;
-            color: white; -webkit-text-stroke: 1px var(--pop-black);
+            box-shadow: 5px 5px 0 var(--pop-black); transition: 0.1s;
+            color: white; -webkit-text-stroke: 1.5px var(--pop-black);
         }
-        /* Grundfarben und Aktiv-Zustände */
+        
         #btn-drinnen { background: var(--pop-green); }
-        #btn-drinnen.active { background: var(--pop-green-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(2px); }
+        #btn-drinnen.active { background: var(--pop-green-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
         
         #btn-draussen { background: var(--pop-red); }
-        #btn-draussen.active { background: #ff4d4d; box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(2px); }
+        #btn-draussen.active { background: var(--pop-red-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
         
         #btn-lernen { background: var(--pop-blue-btn); }
-        #btn-lernen.active { background: var(--pop-blue-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(2px); }
+        #btn-lernen.active { background: var(--pop-blue-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(3px); }
 
         /* Karten-Stapel */
         .deck { position: relative; width: 280px; height: 390px; perspective: 1200px; }
@@ -84,25 +84,27 @@
         .top-left { top: 15px; left: 15px; }
         .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
 
-        /* Comic-Effekt (Länger & Grösser) */
+        /* Comic-Effekt (Optimierte Schlag-Animation) */
         #comic-overlay {
             position: absolute; pointer-events: none; opacity: 0; z-index: 2000;
-            font-size: 80px; color: var(--pop-yellow); -webkit-text-stroke: 3px var(--pop-black);
-            text-shadow: 6px 6px 0 var(--pop-black); transform: scale(0) rotate(-15deg);
+            font-size: 85px; color: var(--pop-yellow); -webkit-text-stroke: 3.5px var(--pop-black);
+            text-shadow: 6px 6px 0 var(--pop-black); transform: scale(0);
         }
-        @keyframes comic-anim {
-            0% { opacity: 0; transform: scale(0) rotate(-15deg); }
-            15% { opacity: 1; transform: scale(1.4) rotate(5deg); }
-            85% { opacity: 1; transform: scale(1.3) rotate(5deg); }
-            100% { opacity: 0; transform: scale(1.1) rotate(15deg); }
+        @keyframes comic-impact {
+            0% { opacity: 0; transform: scale(0) rotate(-20deg); }
+            10% { opacity: 1; transform: scale(1.5) rotate(15deg); }
+            20% { transform: scale(1.4) rotate(-10deg) translateX(5px); }
+            30% { transform: scale(1.5) rotate(10deg) translateX(-5px); }
+            80% { opacity: 1; transform: scale(1.3) rotate(5deg); }
+            100% { opacity: 0; transform: scale(1.1) rotate(25deg); }
         }
-        .comic-active { animation: comic-anim 1.8s forwards; }
+        .comic-active { animation: comic-impact 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards; }
 
-        /* GO Button unten */
+        /* GO Button */
         #go-btn {
-            margin-top: 50px; padding: 18px 60px; background-color: var(--pop-yellow);
+            margin-top: 40px; padding: 20px 70px; background-color: var(--pop-yellow);
             color: var(--pop-black); border: 5px solid var(--pop-black); 
-            font-family: 'Bangers', cursive; font-size: 32px; cursor: pointer; 
+            font-family: 'Bangers', cursive; font-size: 36px; cursor: pointer; 
             text-transform: uppercase; letter-spacing: 3px; transition: 0.1s;
             box-shadow: 7px 7px 0px var(--pop-black); z-index: 100;
         }
@@ -128,7 +130,7 @@
 
     <script>
         const data = {
-            drinnen: ["Hörspiel hören", "Hörbuch hören", "Lieblingssendung schauen", "Comic lesen", "Spannendes Buch lesen", "Lego-Stadt bauen", "Fantasiefigur erfinden", "Geschichte schreiben", "Tagebuch führen", "Zeichnen oder malen", "Basteln mit Karton", "Basteln mit Recyclingmaterial", "Origami falten", "Puzzle lösen", "Gesellschaftsspiel spielen", "Kartentrick lernen", "Zaubertrick vorführen", "Jonglieren üben", "Musikinstrument spielen", "Lied singen", "Tanz erfinden", "Foto machen", "Kurzen Film drehen", "Zimmer umgestalten", "Etwas reparieren", "Modell bauen", "Experiment durchführen", "Quiz spielen", "Rätsel lösen", "Koch- oder Backhilfe leisten", "Anleitung schreiben", "Spiel erklären", "Präsentation vorbereiten", "Eigene Idee umsetzen", "Mini-Projekt starten", "Kreative Challenge erfinden"],
+            drinnen: ["Hörspiel hören", "Hörbuch hören", "Lieblingssendung schauen", "Comic lesen", "Spannendes Buch lesen", "Lego-Stadt bauen", "Fantasiefigur erfinden", "Geschichte schreiben", "Tagebuch führen", "Zeichnen oder malen", "Basteln mit Karton", "Basteln mit Recyclingmaterial", "Origami falten", "Puzzle lösen", "Gesellschaftsspiel spielen", "Kartentrick lernen", "Zaubertrick vorführen", "Jonglieren üben", "Musikinstrument spielen", "Lied singen", "Tanz erfinden", "Foto machen", "Kurzen Film drehen", "Zimmer umgestalten", "Etwas reparieren", "Modell bauen", "Experiment durchführen", "Quiz spielen", "Rätsel lösen", "Kochhilfe leisten", "Anleitung schreiben", "Spiel erklären", "Präsentation vorbereiten", "Eigene Idee umsetzen", "Mini-Projekt starten", "Challenge erfinden"],
             draussen: ["Draussen frei spielen", "Boggia spielen", "Velofahren", "Skateboard fahren", "Spaziergang machen", "Wald erkunden", "Park entdecken", "Tiere beobachten", "Pflanzen bestimmen", "Blätter sammeln", "Steine sammeln", "Naturtagebuch führen", "Schatzsuche machen", "Abfall sammeln", "Müll sortieren", "Umweltplakat gestalten", "Kreidezeichnungen", "Demonstration teilnehmen", "Museum besuchen", "Hindernisparcours bauen", "Picknick", "Draussen lesen", "Draussen malen", "Foto-Challenge", "Wolken beobachten", "Sterne zählen", "Wetter beobachten", "Blumen pflanzen", "Ins Kino gehen", "Vögel beobachten", "Nachbarn grüssen", "Nachbarn klingeln", "Freundin anrufen", "Mini-Interview", "Aufführung draussen", "Abenteuer-Spiel"],
             lernen: ["Sachbuch lesen", "Wissensvideo schauen", "Dokumentation schauen", "Thema recherchieren", "Kurzen Vortrag halten", "Referat vorbereiten", "Mindmap erstellen", "Quiz erfinden", "Quiz lösen", "Logikrätsel lösen", "Knobelaufgabe", "Mathe-Spiel spielen", "Lern-App nutzen", "Vokabeln lernen", "Fremdsprache hören", "Fremdsprache sprechen", "Experiment planen", "Experiment auswerten", "Beobachtungen notieren", "Diagramm zeichnen", "Zeitachse erstellen", "Sachthema erklären", "Lernplakat gestalten", "Lernkarteikarten", "Zusammenfassung", "Präsentation halten", "Lernspiel erklären", "Anderen beibringen", "Interview vorbereiten", "Interview durchführen", "Fragen formulieren", "Diskussion führen", "Meinung begründen", "Lernziel festlegen", "Lernprojekt planen", "Lernprojekt abschliessen"]
         };
@@ -165,51 +167,4 @@
 
         function triggerComicEffect() {
             if (Math.random() > 0.45) return; 
-            const word = comicWords[Math.floor(Math.random() * comicWords.length)];
-            comicOverlay.innerText = word;
-            comicOverlay.classList.remove('comic-active');
-            void comicOverlay.offsetWidth; 
-            comicOverlay.classList.add('comic-active');
-        }
-
-        function createDeck() {
-            deck.innerHTML = '';
-            for (let i = 0; i < 8; i++) {
-                const container = document.createElement('div');
-                container.className = 'card-container';
-                container.style.transform = `translateZ(${-i * 4}px) rotate(${Math.random() * 4 - 2}deg)`;
-                container.innerHTML = `<div class="card card-back"></div><div class="card card-front"></div>`;
-                deck.appendChild(container);
-            }
-        }
-
-        function drawCard() {
-            goBtn.disabled = true;
-            createDeck();
-            const cards = document.querySelectorAll('.card-container');
-            cards.forEach((c, idx) => setTimeout(() => c.classList.add('shuffle'), idx * 50));
-
-            setTimeout(() => {
-                cards.forEach(c => c.classList.remove('shuffle'));
-                playCardSound();
-                triggerComicEffect();
-
-                const selected = cards[Math.floor(Math.random() * cards.length)];
-                const randomPhrase = data[currentCategory][Math.floor(Math.random() * 36)];
-                const randomSuit = suits[Math.floor(Math.random() * 4)];
-                const front = selected.querySelector('.card-front');
-                
-                front.innerHTML = `
-                    <div class="suit top-left">${randomSuit}</div>
-                    <div class="text-content"><span>${randomPhrase}</span></div>
-                    <div class="suit bottom-right">${randomSuit}</div>
-                `;
-                selected.classList.add('drawn');
-                goBtn.disabled = false;
-            }, 1000);
-        }
-
-        window.onload = createDeck;
-    </script>
-</body>
-</html>
+            const word = comic
