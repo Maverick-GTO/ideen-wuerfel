@@ -31,9 +31,9 @@
             height: 100vh; overflow: hidden;
         }
 
-        /* Kategorie-Buttons: Abstand nach unten vergrößert */
+        /* Kategorie-Buttons: Abstand nach unten deutlich vergrößert (55px) */
         .controls {
-            display: flex; gap: 12px; margin-bottom: 45px; z-index: 100;
+            display: flex; gap: 12px; margin-bottom: 55px; z-index: 100;
         }
         .cat-btn {
             padding: 18px 28px; font-family: 'Bangers', cursive; font-size: 24px;
@@ -82,7 +82,7 @@
         }
         .text-content { max-width: 100%; display: flex; align-items: center; justify-content: center; min-height: 200px; }
         
-        /* Symbole vergrößert */
+        /* Symbole */
         .suit { position: absolute; font-size: 60px; color: var(--pop-red); -webkit-text-stroke: 2px var(--pop-black); text-shadow: 2px 2px 0 var(--pop-black); }
         .top-left { top: 15px; left: 15px; }
         .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
@@ -180,10 +180,11 @@
 
         function createDeck() {
             deck.innerHTML = '';
-            for (let i = 0; i < 8; i++) {
+            for (let i = 8; i > 0; i--) { // Rückwärts, damit die oberste Karte zuletzt kommt
                 const container = document.createElement('div');
                 container.className = 'card-container';
-                container.style.transform = `translateZ(${-i * 4}px) rotate(${Math.random() * 4 - 2}deg)`;
+                // Leicht unterschiedliche Rotation für natürlichen Stapel-Look
+                container.style.transform = `translateZ(${-i * 3}px) rotate(${Math.random() * 6 - 3}deg)`;
                 container.innerHTML = `<div class="card card-back"></div><div class="card card-front"></div>`;
                 deck.appendChild(container);
             }
@@ -192,28 +193,39 @@
         function drawCard() {
             if (goBtn.disabled) return;
             goBtn.disabled = true;
+            
+            // Kartenstapel neu erstellen für frischen Look
             createDeck();
-            const cards = document.querySelectorAll('.card-container');
+            
+            const cards = Array.from(document.querySelectorAll('.card-container'));
+            // Die oberste Karte ist das letzte Element im Array
+            const topCard = cards[cards.length - 1];
+
+            // Alle Karten mischen lassen
             cards.forEach((c, idx) => setTimeout(() => c.classList.add('shuffle'), idx * 50));
 
             setTimeout(() => {
+                // Mischen beenden
                 cards.forEach(c => c.classList.remove('shuffle'));
                 playCardSound();
                 triggerComicEffect();
 
-                const selected = cards[Math.floor(Math.random() * cards.length)];
+                // Inhalt für die oberste Karte setzen
                 const randomPhrase = data[currentCategory][Math.floor(Math.random() * 36)];
                 const randomSuit = suits[Math.floor(Math.random() * 4)];
-                const front = selected.querySelector('.card-front');
+                const front = topCard.querySelector('.card-front');
                 
                 front.innerHTML = `
                     <div class="suit top-left">${randomSuit}</div>
                     <div class="text-content"><span>${randomPhrase}</span></div>
                     <div class="suit bottom-right">${randomSuit}</div>
                 `;
-                selected.classList.add('drawn');
+                
+                // Nur die oberste Karte ziehen
+                topCard.classList.add('drawn');
+                
                 goBtn.disabled = false;
-            }, 1000);
+            }, 1200);
         }
 
         // Kartenstapel sofort beim Laden anzeigen
