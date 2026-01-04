@@ -11,7 +11,11 @@
         :root {
             --pop-red: #e60000;
             --pop-yellow: #ffd700;
-            --pop-blue: #0000ff;
+            --pop-yellow-bright: #ffff00;
+            --pop-green: #008000;
+            --pop-green-bright: #00ff00;
+            --pop-blue-btn: #0055ff;
+            --pop-blue-bright: #00d2ff;
             --pop-black: #000000;
             --bg-dark-blue: #040426;
         }
@@ -27,19 +31,25 @@
             height: 100vh; overflow: hidden;
         }
 
-        /* Kategorien-Auswahl oben */
+        /* Kategorie-Buttons oben */
         .controls {
-            display: flex; gap: 10px; margin-bottom: 20px; z-index: 100;
+            display: flex; gap: 10px; margin-bottom: 30px; z-index: 100;
         }
         .cat-btn {
-            padding: 10px 15px; font-family: 'Bangers', cursive; font-size: 18px;
-            border: 3px solid var(--pop-black); cursor: pointer; text-transform: uppercase;
-            box-shadow: 4px 4px 0 var(--pop-black); transition: 0.1s;
+            padding: 12px 18px; font-family: 'Bangers', cursive; font-size: 18px;
+            border: 4px solid var(--pop-black); cursor: pointer; text-transform: uppercase;
+            box-shadow: 4px 4px 0 var(--pop-black); transition: 0.2s;
+            color: white; -webkit-text-stroke: 1px var(--pop-black);
         }
-        #btn-drinnen { background: var(--pop-yellow); }
-        #btn-draussen { background: #00ff00; }
-        #btn-lernen { background: #00d2ff; }
-        .cat-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--pop-black); }
+        /* Grundfarben und Aktiv-Zustände */
+        #btn-drinnen { background: var(--pop-green); }
+        #btn-drinnen.active { background: var(--pop-green-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(2px); }
+        
+        #btn-draussen { background: var(--pop-red); }
+        #btn-draussen.active { background: #ff4d4d; box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(2px); }
+        
+        #btn-lernen { background: var(--pop-blue-btn); }
+        #btn-lernen.active { background: var(--pop-blue-bright); box-shadow: 2px 2px 0 var(--pop-black); transform: translateY(2px); }
 
         /* Karten-Stapel */
         .deck { position: relative; width: 280px; height: 390px; perspective: 1200px; }
@@ -55,7 +65,7 @@
             box-shadow: 8px 8px 0px var(--pop-black); background-color: #fff;
         }
         .card-back {
-            background-color: var(--pop-blue);
+            background-color: #0000ff;
             background-image: radial-gradient(var(--pop-black) 20%, transparent 21%);
             background-size: 15px 15px; z-index: 2;
         }
@@ -74,34 +84,47 @@
         .top-left { top: 15px; left: 15px; }
         .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
 
-        /* Comic-Effekte */
-        .comic-effect {
+        /* Comic-Effekt (Länger & Grösser) */
+        #comic-overlay {
             position: absolute; pointer-events: none; opacity: 0; z-index: 2000;
-            font-size: 60px; color: var(--pop-yellow); -webkit-text-stroke: 3px var(--pop-black);
-            text-shadow: 5px 5px 0 var(--pop-black); transform: scale(0) rotate(-10deg);
+            font-size: 80px; color: var(--pop-yellow); -webkit-text-stroke: 3px var(--pop-black);
+            text-shadow: 6px 6px 0 var(--pop-black); transform: scale(0) rotate(-15deg);
         }
-        @keyframes boom-anim {
-            0% { opacity: 0; transform: scale(0) rotate(-10deg); }
-            50% { opacity: 1; transform: scale(1.5) rotate(5deg); }
-            100% { opacity: 0; transform: scale(1.2) rotate(10deg); }
+        @keyframes comic-anim {
+            0% { opacity: 0; transform: scale(0) rotate(-15deg); }
+            15% { opacity: 1; transform: scale(1.4) rotate(5deg); }
+            85% { opacity: 1; transform: scale(1.3) rotate(5deg); }
+            100% { opacity: 0; transform: scale(1.1) rotate(15deg); }
         }
-        .boom-active { animation: boom-anim 0.8s forwards; }
+        .comic-active { animation: comic-anim 1.8s forwards; }
+
+        /* GO Button unten */
+        #go-btn {
+            margin-top: 50px; padding: 18px 60px; background-color: var(--pop-yellow);
+            color: var(--pop-black); border: 5px solid var(--pop-black); 
+            font-family: 'Bangers', cursive; font-size: 32px; cursor: pointer; 
+            text-transform: uppercase; letter-spacing: 3px; transition: 0.1s;
+            box-shadow: 7px 7px 0px var(--pop-black); z-index: 100;
+        }
+        #go-btn:active { transform: translate(4px, 4px); box-shadow: 3px 3px 0px var(--pop-black); }
+        #go-btn:disabled { opacity: 0.5; }
 
         .shuffle { animation: shuffle-move 0.4s ease-in-out infinite; }
         @keyframes shuffle-move { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(120px) rotate(10deg); } }
-        .drawn { transform: scale(1.1) translateY(-20px) rotateY(180deg) !important; z-index: 1000 !important; box-shadow: 20px 20px 0px rgba(0,0,0,0.5) !important; }
+        .drawn { transform: scale(1.1) translateY(-25px) rotateY(180deg) !important; z-index: 1000 !important; box-shadow: 20px 20px 0px rgba(0,0,0,0.5) !important; }
     </style>
 </head>
 <body>
     <div class="controls">
-        <button class="cat-btn" id="btn-drinnen" onclick="drawCard('drinnen')">Drinnen</button>
-        <button class="cat-btn" id="btn-draussen" onclick="drawCard('draussen')">Draussen</button>
-        <button class="cat-btn" id="btn-lernen" onclick="drawCard('lernen')">Lernen</button>
+        <button class="cat-btn active" id="btn-drinnen" onclick="setCategory('drinnen')">Drinnen</button>
+        <button class="cat-btn" id="btn-draussen" onclick="setCategory('draussen')">Draussen</button>
+        <button class="cat-btn" id="btn-lernen" onclick="setCategory('lernen')">Lernen</button>
     </div>
 
     <div class="deck" id="deck"></div>
-    <div id="comic-boom" class="comic-effect">BOOM!</div>
-    <div id="comic-pow" class="comic-effect" style="color: #ff00ff;">POW!</div>
+    <div id="comic-overlay">BOOM!</div>
+
+    <button id="go-btn" onclick="drawCard()">GO</button>
 
     <script>
         const data = {
@@ -110,9 +133,19 @@
             lernen: ["Sachbuch lesen", "Wissensvideo schauen", "Dokumentation schauen", "Thema recherchieren", "Kurzen Vortrag halten", "Referat vorbereiten", "Mindmap erstellen", "Quiz erfinden", "Quiz lösen", "Logikrätsel lösen", "Knobelaufgabe", "Mathe-Spiel spielen", "Lern-App nutzen", "Vokabeln lernen", "Fremdsprache hören", "Fremdsprache sprechen", "Experiment planen", "Experiment auswerten", "Beobachtungen notieren", "Diagramm zeichnen", "Zeitachse erstellen", "Sachthema erklären", "Lernplakat gestalten", "Lernkarteikarten", "Zusammenfassung", "Präsentation halten", "Lernspiel erklären", "Anderen beibringen", "Interview vorbereiten", "Interview durchführen", "Fragen formulieren", "Diskussion führen", "Meinung begründen", "Lernziel festlegen", "Lernprojekt planen", "Lernprojekt abschliessen"]
         };
 
+        const comicWords = ["BOOM!", "POW!", "COOL!", "ZAP!", "CRACK!", "WOW!", "WAHHH!"];
         const suits = ["♥", "♦", "♣", "♠"];
+        let currentCategory = 'drinnen';
+        
         const deck = document.getElementById('deck');
-        const btns = document.querySelectorAll('.cat-btn');
+        const goBtn = document.getElementById('go-btn');
+        const comicOverlay = document.getElementById('comic-overlay');
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${cat}`).classList.add('active');
+        }
 
         function playCardSound() {
             try {
@@ -126,17 +159,17 @@
                 gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.15);
                 oscillator.connect(gain); gain.connect(context.destination);
                 oscillator.start(); oscillator.stop(context.currentTime + 0.15);
-                if (navigator.vibrate) { navigator.vibrate(40); }
+                if (navigator.vibrate) { navigator.vibrate(50); }
             } catch (e) {}
         }
 
         function triggerComicEffect() {
-            if (Math.random() > 0.4) return; // 40% Chance
-            const effectId = Math.random() > 0.5 ? 'comic-boom' : 'comic-pow';
-            const el = document.getElementById(effectId);
-            el.classList.remove('boom-active');
-            void el.offsetWidth; // Reset animation
-            el.classList.add('boom-active');
+            if (Math.random() > 0.45) return; 
+            const word = comicWords[Math.floor(Math.random() * comicWords.length)];
+            comicOverlay.innerText = word;
+            comicOverlay.classList.remove('comic-active');
+            void comicOverlay.offsetWidth; 
+            comicOverlay.classList.add('comic-active');
         }
 
         function createDeck() {
@@ -150,8 +183,8 @@
             }
         }
 
-        function drawCard(category) {
-            btns.forEach(b => b.disabled = true);
+        function drawCard() {
+            goBtn.disabled = true;
             createDeck();
             const cards = document.querySelectorAll('.card-container');
             cards.forEach((c, idx) => setTimeout(() => c.classList.add('shuffle'), idx * 50));
@@ -162,7 +195,7 @@
                 triggerComicEffect();
 
                 const selected = cards[Math.floor(Math.random() * cards.length)];
-                const randomPhrase = data[category][Math.floor(Math.random() * 36)];
+                const randomPhrase = data[currentCategory][Math.floor(Math.random() * 36)];
                 const randomSuit = suits[Math.floor(Math.random() * 4)];
                 const front = selected.querySelector('.card-front');
                 
@@ -172,7 +205,7 @@
                     <div class="suit bottom-right">${randomSuit}</div>
                 `;
                 selected.classList.add('drawn');
-                btns.forEach(b => b.disabled = false);
+                goBtn.disabled = false;
             }, 1000);
         }
 
