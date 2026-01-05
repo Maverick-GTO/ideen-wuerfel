@@ -25,14 +25,15 @@
             background-color: var(--bg-dark-blue);
             background-image: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="15" r="4" fill="%234da6ff"/><circle cx="45" cy="15" r="4" fill="%23ffffff"/><circle cx="15" cy="45" r="4" fill="%23ff66b3"/><circle cx="45" cy="45" r="4" fill="%239933ff"/></svg>');
             background-size: 60px 60px; font-family: 'Bangers', cursive;
-            display: flex; flex-direction: column; align-items: center; justify-content: space-around;
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; /* Zentriert den gesamten Block */
             height: 100vh; overflow: hidden; box-sizing: border-box;
         }
 
-        /* Obere Buttons mit Abstand nach unten */
+        /* Obere Buttons: Abstand zur Karte auf genau eine Punktreihe (ca. 30-40px) */
         .controls { 
             display: flex; gap: 8px; z-index: 100; width: 100%; 
-            justify-content: center; margin-bottom: 10px; margin-top: 10px;
+            justify-content: center; margin-bottom: 35px; 
         }
         .cat-btn {
             padding: 12px 8px; font-family: 'Bangers', cursive; font-size: 18px;
@@ -49,7 +50,7 @@
 
         .deck-container { 
             display: flex; justify-content: center; align-items: center; 
-            width: 100%; position: relative; flex-grow: 1;
+            width: 100%; position: relative;
         }
         .deck { position: relative; width: 280px; height: 380px; perspective: 1200px; }
         .card-container { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
@@ -65,7 +66,7 @@
         /* Text zentral in der Karte */
         .text-content { font-size: 34px; line-height: 1.1; text-transform: uppercase; word-break: break-word; z-index: 5; position: relative; }
         
-        /* Grosses Herz, Schaufel etc. */
+        /* Kartensymbole gross */
         .suit { position: absolute; font-size: 85px; color: var(--pop-red); -webkit-text-stroke: 2px var(--pop-black); text-shadow: 2px 2px 0 var(--pop-black); z-index: 1; }
         .top-left { top: 10px; left: 10px; }
         .bottom-right { bottom: 10px; right: 10px; transform: rotate(180deg); }
@@ -82,16 +83,15 @@
             100% { opacity: 0; transform: translate(-50%, -50%) scale(2.2) rotate(30deg); }
         }
 
-        /* GO Button mit Abstand nach oben */
+        /* GO Button: Ebenfalls genau eine Punktreihe Abstand (ca. 35px) */
         #go-btn { 
-            margin-top: 10px; margin-bottom: 20px; padding: 15px 80px; 
+            margin-top: 35px; padding: 15px 80px; 
             background-color: var(--pop-yellow); font-size: 40px; 
             border: 5px solid var(--pop-black); box-shadow: 6px 6px 0 var(--pop-black); 
             cursor: pointer; font-family: 'Bangers'; text-transform: uppercase; 
         }
         #go-btn:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0 var(--pop-black); }
 
-        /* Mischel-Animation präsenter */
         .shuffle { animation: shuffle-anim 0.4s ease-in-out infinite; z-index: 500 !important; }
         @keyframes shuffle-anim { 
             0%, 100% { transform: translateX(0) scale(1); } 
@@ -146,7 +146,7 @@
         function createDeck() {
             const deck = document.getElementById('deck');
             deck.innerHTML = '';
-            for (let i = 5; i > 0; i--) {
+            for (let i = 4; i > 0; i--) {
                 const div = document.createElement('div');
                 div.className = 'card-container';
                 div.style.transform = `translateZ(${-i * 4}px) rotate(${Math.random() * 4 - 2}deg)`;
@@ -159,16 +159,12 @@
             const btn = document.getElementById('go-btn');
             if (btn.disabled) return;
             btn.disabled = true;
-
-            // Wichtig: Stapel sofort neu initialisieren für "Mischeln im Vordergrund"
             createDeck();
 
             if (pools[currentCategory].length === 0) refillPool(currentCategory);
             
             const cardText = pools[currentCategory].pop();
             const cards = document.querySelectorAll('.card-container');
-            
-            // Mischeln starten
             cards.forEach((c, i) => setTimeout(() => c.classList.add('shuffle'), i * 30));
 
             setTimeout(() => {
