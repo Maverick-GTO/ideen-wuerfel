@@ -1,21 +1,17 @@
 {
-  "name": "Magische Karten",
-  "short_name": "Ideen-Karten",
+  "name": "Ideen Karten",
+  "short_name": "Ideen",
+  "description": "Magische Karten für drinnen, draussen und zum Lernen",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#050510",
-  "theme_color": "#c5a059",
-"icons": [
-  {
-    "src": "icon.png",
-    "sizes": "512x512",
-    "type": "image/png",
-    "purpose": "maskable any"
-  }
-]
+  "background_color": "#040426",
+  "theme_color": "#040426",
+  "icons": [
+    {
       "src": "icon.png",
-      "sizes": "1024x1024",
-      "type": "image/png"
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
